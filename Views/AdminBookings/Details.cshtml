@@ -1,0 +1,115 @@
+﻿@model DuAnASPChoThueXe.Models.Booking
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Chi Tiết Đơn Hàng #" + Model.Id;
+}
+
+<style>
+    /* Style dành riêng cho lúc in hóa đơn */
+    @@media print {
+        #sidebar, .btn-print, .btn-back, .badge-status-update {
+            display: none !important;
+        }
+
+        .main-content {
+            padding: 0 !important;
+            margin: 0 !important;
+            width: 100% !important;
+        }
+
+        .invoice-box {
+            border: none !important;
+            box-shadow: none !important;
+        }
+    }
+
+    .invoice-box {
+        background: #fff;
+        padding: 40px;
+        border-radius: 15px;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+        border: 1px solid #eee;
+    }
+
+    .invoice-header {
+        border-bottom: 2px solid #ff4d6d;
+        padding-bottom: 20px;
+        margin-bottom: 30px;
+    }
+</style>
+
+<div class="mb-4">
+    <a asp-action="Index" class="btn btn-light rounded-pill btn-back">
+        <i class="bi bi-arrow-left me-2"></i> Quay lại danh sách
+    </a>
+    <button onclick="window.print()" class="btn btn-danger rounded-pill px-4 ms-2 btn-print shadow">
+        <i class="bi bi-printer me-2"></i> IN HÓA ĐƠN (XUẤT PDF)
+    </button>
+</div>
+
+<div class="invoice-box container-fluid">
+    <!-- Header Hóa Đơn -->
+    <div class="row invoice-header align-items-center">
+        <div class="col-6">
+            <img src="/images/logo-knp.jpg" height="80" class="mb-2">
+            <h4 class="fw-bold mb-0">KNP MOTORBIKE RENTAL</h4>
+            <p class="text-muted small mb-0">Địa chỉ: 115/21 Lý Chính Thắng, Quận 3, TP.HCM</p>
+            <p class="text-muted small">Hotline: 0908 630 065</p>
+        </div>
+        <div class="col-6 text-end">
+            <h2 class="fw-bold text-uppercase" style="color: #ff4d6d;">Hóa Đơn Thuê Xe</h2>
+            <p class="mb-0">Mã đơn: <strong>#@Model.Id</strong></p>
+            <p>Ngày đặt: @Model.StartDate.ToString("dd/MM/yyyy HH:mm")</p>
+        </div>
+    </div>
+
+    <!-- Thông tin khách hàng -->
+    <div class="row mb-5">
+        <div class="col-6">
+            <h6 class="text-uppercase fw-bold text-secondary border-bottom pb-2 mb-3">Thông tin khách thuê:</h6>
+            <p class="mb-1">Họ tên: <strong>@Model.CustomerName</strong></p>
+            <p class="mb-1">Số điện thoại: <strong>@Model.CustomerPhone</strong></p>
+            <p class="mb-1">Trạng thái đơn: <span class="badge bg-warning text-dark">@Model.Status</span></p>
+        </div>
+        <div class="col-6 text-end">
+            <h6 class="text-uppercase fw-bold text-secondary border-bottom pb-2 mb-3">Hình thức thanh toán:</h6>
+            <p>Thanh toán khi nhận xe (Tiền mặt)</p>
+        </div>
+    </div>
+
+    <!-- Chi tiết xe thuê -->
+    <table class="table table-bordered align-middle text-center mb-5">
+        <thead class="table-light">
+            <tr>
+                <th>Ảnh xe</th>
+                <th>Tên loại xe</th>
+                <th>Phân khối</th>
+                <th>Đơn giá/Ngày</th>
+                <th>Thành tiền</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><img src="@Model.Motorbike?.ImageUrl" width="100" class="rounded"></td>
+                <td class="fw-bold">@Model.Motorbike?.Name</td>
+                <td>@Model.Motorbike?.Capacity</td>
+                <td>@Model.Motorbike?.PricePerDay.ToString("N0") đ</td>
+                <td class="fw-bold text-danger">@Model.TotalPrice.ToString("N0") đ</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Tổng kết & Chữ ký -->
+    <div class="row">
+        <div class="col-7">
+            <p class="fst-italic small">* Lưu ý: Quý khách vui lòng kiểm tra xe kỹ trước khi nhận. Đơn giá chưa bao gồm tiền thế chân (3.000.000đ).</p>
+        </div>
+        <div class="col-5 text-end">
+            <h4 class="fw-bold">TỔNG CỘNG: <span class="text-danger">@Model.TotalPrice.ToString("N0") đ</span></h4>
+            <div class="mt-5">
+                <p class="mb-5 fw-bold">Người lập hóa đơn</p>
+                <p class="mt-5 text-muted">(Ký và ghi rõ họ tên)</p>
+            </div>
+        </div>
+    </div>
+</div>

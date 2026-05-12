@@ -1,0 +1,194 @@
+﻿@model IEnumerable<DuAnASPChoThueXe.Models.CartItem>
+@{
+    ViewData["Title"] = "Thanh Toán Giỏ Hàng";
+    var totalAmount = Model.Sum(x => x.Price * x.Quantity);
+}
+
+<style>
+    .cart-header {
+        color: #ff4d6d;
+        border-bottom: 2px solid #ff85a2;
+        display: inline-block;
+        padding-bottom: 5px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+    }
+
+    .table-cart {
+        border: 1px solid #eee;
+        border-radius: 8px;
+    }
+
+        .table-cart th {
+            background: #f8f9fa;
+            color: #666;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+    .form-checkout {
+        background: #fff;
+        padding: 25px;
+        border: 1px solid #eee;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+
+    .btn-checkout {
+        background: #f3801f;
+        color: white;
+        font-weight: 800;
+        padding: 15px;
+        border: none;
+        width: 100%;
+        text-transform: uppercase;
+        border-radius: 8px;
+        font-size: 18px;
+        transition: 0.3s;
+    }
+
+        .btn-checkout:hover {
+            background: #d66d12;
+            transform: scale(1.02);
+        }
+
+    .qr-box {
+        background: #fff0f3;
+        border: 2px dashed #ff85a2;
+        border-radius: 10px;
+        padding: 15px;
+        display: none;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row g-4">
+        <!-- Cột TRÁI: Giỏ hàng -->
+        <div class="col-lg-7">
+            <h5 class="cart-header">GIỎ HÀNG CỦA BẠN:</h5>
+            <div class="table-responsive">
+                <table class="table table-cart align-middle">
+                    <thead class="text-center">
+                        <tr>
+                            <th>Hình Ảnh</th>
+                            <th>Tên Sản Phẩm</th>
+                            <th>Số Lượng</th>
+                            <th class="text-end">Thành Tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="text-center"><img src="@item.Motorbike?.ImageUrl" width="90" class="rounded border shadow-sm"></td>
+                                <td><div class="fw-bold text-primary">Cho Thuê Xe @item.Motorbike?.Name</div></td>
+                                <td class="text-center">@item.Quantity</td>
+                                <td class="text-end text-danger fw-bold">@((item.Price * item.Quantity).ToString("N0")) vnđ</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="p-3 bg-light rounded-3 mt-3 shadow-sm border">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Tạm tính:</span>
+                    <span class="fw-bold">@totalAmount.ToString("N0") vnđ</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <h5 class="fw-bold">TỔNG CỘNG:</h5>
+                    <h5 class="text-danger fw-bold">@totalAmount.ToString("N0") vnđ</h5>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cột PHẢI: Thanh toán & Địa chỉ -->
+        <div class="col-lg-5">
+            <div class="form-checkout">
+                <h6 class="fw-bold mb-3" style="color: #ff85a2;"><i class="bi bi-wallet2 me-2"></i>HÌNH THỨC THANH TOÁN:</h6>
+                <div class="mb-4">
+                    <div class="form-check border p-2 rounded mb-2">
+                        <input class="form-check-input ms-1" type="radio" name="paymentMethod" value="Transfer" id="payTransfer" onclick="toggleQR(true)">
+                        <label class="form-check-label ms-4 fw-bold" for="payTransfer">CHUYỂN KHOẢN (GIẢM 5%)</label>
+                    </div>
+
+                    <!-- Mã QR hiện ra khi chọn chuyển khoản -->
+                    <div id="qrSection" class="qr-box text-center mb-3">
+                        <p class="small fw-bold text-danger mb-2">Quét mã VietQR để thanh toán:</p>
+                        <img src="https://api.vietqr.io/image/970422-0908630065-o8GZ5rN.jpg?accountName=KNP%20RENTAL&amount=@totalAmount" class="img-fluid mb-2 border p-1 bg-white" style="max-width: 180px;">
+                        <div class="text-start small mt-2">
+                            <strong>MB Bank:</strong> 0908 000 000 <br>
+                            <strong>Chủ TK:</strong> KNP MOTORBIKE <br>
+                            <strong>Nội dung:</strong> THUE XE [SĐT CỦA BẠN]
+                        </div>
+                    </div>
+
+                    <div class="form-check border p-2 rounded">
+                        <input class="form-check-input ms-1" type="radio" name="paymentMethod" value="COD" id="payCOD" checked onclick="toggleQR(false)">
+                        <label class="form-check-label ms-4 fw-bold" for="payCOD">THANH TOÁN KHI NHẬN XE</label>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mb-3" style="color: #ff85a2;"><i class="bi bi-geo-alt me-2"></i>GIAO HÀNG TẠI TP.HCM:</h6>
+                <form asp-action="ProcessCheckout" method="post">
+                    <div class="row g-2">
+                        <div class="col-6"><input type="text" name="customerName" class="form-control" placeholder="Họ tên" required></div>
+                        <div class="col-6"><input type="text" name="customerPhone" class="form-control" placeholder="Số điện thoại" required></div>
+                        <div class="col-12"><input type="email" name="customerEmail" class="form-control" placeholder="Email (không bắt buộc)"></div>
+
+                        <div class="col-4">
+                            <select class="form-select" name="province" required><option value="hcm">TP. Hồ Chí Minh</option></select>
+                        </div>
+                        <div class="col-4">
+                            <select class="form-select" name="district" id="districts" required><option value="">Quận/Huyện</option></select>
+                        </div>
+                        <div class="col-4">
+                            <select class="form-select" name="ward" id="wards" required><option value="">Phường/Xã</option></select>
+                        </div>
+
+                        <div class="col-12"><input type="text" name="address" class="form-control" placeholder="Số nhà, tên đường..." required></div>
+                        <div class="col-12"><textarea name="note" class="form-control" rows="2" placeholder="Ghi chú thêm..."></textarea></div>
+                    </div>
+                    <button type="submit" class="btn-checkout mt-4 shadow">XÁC NHẬN THANH TOÁN</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // Dữ liệu Quận/Phường TP.HCM
+    const hcmData = {
+        "Quận 1": ["P. Bến Nghé", "P. Đa Kao", "P. Tân Định", "P. Phạm Ngũ Lão"],
+        "Quận 3": ["P. Võ Thị Sáu", "P. 5", "P. 7", "P. 1"],
+        "Quận 7": ["P. Tân Phong", "P. Phú Mỹ", "P. Tân Kiểng"],
+        "Quận Tân Bình": ["P. 2", "P. 12", "P. 15", "P. Phổ Quang"],
+        "Quận Phú Nhuận": ["P. 1", "P. 13", "P. 15"],
+        "TP. Thủ Đức": ["P. Thảo Điền", "P. Linh Tây", "P. Hiệp Phú", "P. Bình Thọ"],
+        "Quận Bình Thạnh": ["P. 2", "P. 12", "P. 25"]
+    };
+
+    $(document).ready(function () {
+        // Đổ danh sách Quận
+        let dOptions = '<option value="">Chọn Quận/Huyện</option>';
+        Object.keys(hcmData).forEach(d => { dOptions += `<option value="${d}">${d}</option>`; });
+        $('#districts').html(dOptions);
+
+        // Khi chọn Quận -> Đổ danh sách Phường tương ứng
+        $('#districts').change(function() {
+            let val = $(this).val();
+            let wOptions = '<option value="">Chọn Phường/Xã</option>';
+            if(hcmData[val]) {
+                hcmData[val].forEach(w => { wOptions += `<option value="${w}">${w}</option>`; });
+            }
+            $('#wards').html(wOptions);
+        });
+    });
+
+    // Ẩn/hiện mã QR
+    function toggleQR(show) {
+        if(show) $('#qrSection').slideDown();
+        else $('#qrSection').slideUp();
+    }
+</script>

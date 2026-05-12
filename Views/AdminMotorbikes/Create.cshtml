@@ -1,0 +1,54 @@
+﻿@model DuAnASPChoThueXe.Models.Motorbike
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Thêm Xe Máy Mới";
+}
+
+<div class="card shadow-sm border-0 p-4" style="max-width: 900px; border-radius: 15px;">
+    <form asp-action="Create" method="post" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Tên xe máy</label>
+                <input asp-for="Name" class="form-control rounded-3" required placeholder="Vd: Honda Vision 2024">
+                <span asp-validation-for="Name" class="text-danger small"></span>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label class="form-label fw-bold">Danh mục</label>
+                <select asp-for="CategoryId" class="form-select rounded-3" asp-items="ViewBag.Categories"></select>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label class="form-label fw-bold">Giá thuê/ngày</label>
+                <input asp-for="PricePerDay" type="number" class="form-control rounded-3" required>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label class="form-label fw-bold">Phân khối (cc)</label>
+                <input asp-for="Capacity" class="form-control rounded-3" placeholder="110cc">
+            </div>
+            <div class="col-md-8 mb-3">
+                <label class="form-label fw-bold">Gợi ý khách hàng</label>
+                <input asp-for="Suggestion" class="form-control rounded-3" placeholder="Phù hợp đi lại trong nội thành">
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Mô tả ngắn</label>
+            <textarea asp-for="Description" class="form-control rounded-3" rows="3" placeholder="Xe mới, máy êm, sạch sẽ..."></textarea>
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label fw-bold">Chọn ảnh từ máy tính</label>
+            <input type="file" name="file" class="form-control rounded-3" accept="image/*">
+            <small class="text-muted italic">Lưu ý: Nên chọn ảnh rõ nét, nền sạch.</small>
+        </div>
+
+        <div class="text-end border-top pt-4">
+            <a asp-action="Index" class="btn btn-light rounded-pill px-4 me-2">Hủy bỏ</a>
+            <button type="submit" class="btn btn-danger rounded-pill px-5 shadow" style="background:#ff4d6d; border:none;">
+                LƯU THÔNG TIN XE
+            </button>
+        </div>
+    </form>
+</div>

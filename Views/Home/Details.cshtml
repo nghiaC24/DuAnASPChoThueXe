@@ -1,0 +1,184 @@
+﻿@model DuAnASPChoThueXe.Models.Motorbike
+@{
+    ViewData["Title"] = "Cho thuê xe " + Model.Name;
+    var otherBikes = ViewBag.OtherBikes as List<DuAnASPChoThueXe.Models.Motorbike>;
+}
+
+<style>
+    .breadcrumb-knp {
+        background: #f8f9fa;
+        padding: 10px 0;
+        font-size: 14px;
+        border-bottom: 1px solid #eee;
+    }
+
+        .breadcrumb-knp a {
+            color: #666;
+            text-decoration: none;
+        }
+
+    .price-red {
+        color: #ff0000;
+        font-weight: bold;
+        font-size: 24px;
+    }
+
+    .btn-rent-now {
+        background: #ff00cc;
+        color: white;
+        border-radius: 30px;
+        font-weight: bold;
+        padding: 12px 25px;
+        border: none;
+        text-transform: uppercase;
+    }
+
+    .btn-book-before {
+        background: #82b000;
+        color: white;
+        border-radius: 30px;
+        font-weight: bold;
+        padding: 12px 25px;
+        border: none;
+        text-transform: uppercase;
+    }
+
+    .table-price {
+        border: 1px solid #ddd;
+        width: 100%;
+        text-align: center;
+    }
+
+        .table-price th {
+            background: #fff0f3;
+            color: #ff0000;
+            padding: 15px;
+            border: 1px solid #ddd;
+        }
+
+        .table-price td {
+            padding: 15px;
+            border: 1px solid #ddd;
+        }
+
+    .sidebar-title {
+        background: #fff0f3;
+        color: #4b0082;
+        padding: 10px;
+        font-weight: bold;
+        border-left: 5px solid #ff85a2;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+    }
+
+    .other-bike-item {
+        display: flex;
+        padding: 10px;
+        border: 1px solid #eee;
+        margin-bottom: 10px;
+        text-decoration: none;
+        color: #333;
+        transition: 0.3s;
+    }
+
+        .other-bike-item:hover {
+            border-color: #ff85a2;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+</style>
+
+<!-- Breadcrumb -->
+<div class="breadcrumb-knp">
+    <div class="container">
+        <a href="/">Trang chủ</a> / <a href="#">Sản phẩm</a> / Cho thuê xe @Model.Name
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row">
+        <!-- Cột TRÁI: Hình ảnh và Bảng giá -->
+        <div class="col-lg-9">
+            <div class="row mb-5">
+                <div class="col-md-6">
+                    <div class="border p-2">
+                        <img src="@Model.ImageUrl" class="img-fluid w-100" alt="@Model.Name">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h1 class="fw-bold fs-3 text-uppercase">CHO THUÊ XE @Model.Name</h1>
+                    <hr>
+                    <p class="fs-5">Giá từ (price from): <span class="price-red">@Model.PricePerDay.ToString("N0") vnđ</span> ngày (day)</p>
+                    <ul class="list-unstyled mt-4 lh-lg">
+                        <li>+ Đời xe (Version): <span class="text-muted">@Model.Capacity _ 2024</span></li>
+                        <li>+ Lượt xem (Views): <span class="text-muted">86.724</span></li>
+                        <li>
+                            <i class="bi bi-check-square-fill text-primary"></i>
+                            Khách cần thuê xe máy hãy liên hệ ngay số điện thoại hoặc Zalo:
+                            <strong class="text-danger">0908 630 065</strong> để được tư vấn thủ tục.
+                        </li>
+                    </ul>
+                    <div class="mt-4 d-flex gap-2">
+                        <a href="/Cart/AddToCart?motorbikeId=@Model.Id" class="btn btn-rent-now">THUÊ NGAY (RENT NOW)</a>
+                        <button class="btn btn-book-before">ĐẶT TRƯỚC (BOOK)</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bảng giá chi tiết -->
+            <div class="sidebar-title mt-5">
+                <i class="bi bi-check-square-fill me-2"></i> BẢNG GIÁ THUÊ CHI TIẾT (DETAILED MOTORCYCLE RENTAL PRICE LIST)
+            </div>
+            <table class="table-price mb-5">
+                <thead>
+                    <tr>
+                        <th>Số Ngày</th>
+                        <th>Giá Thuê</th>
+                        <th>Thủ Tục</th>
+                        <th>Tiền Thế Chân</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Từ 1 đến 2 ngày</td>
+                        <td class="fw-bold">@Model.PricePerDay.ToString("N0") / ngày</td>
+                        <td rowspan="3" class="align-middle">Khách thuê cần đủ 18T <br> và có <strong>CCCD</strong></td>
+                        <td rowspan="3" class="align-middle">Từ <strong>3 Triệu</strong> để nhận xe. Công ty sẽ hoàn trả khi kết thúc hợp đồng</td>
+                    </tr>
+                    <tr>
+                        <td>Từ 3 đến dưới 25 ngày</td>
+                        <td class="fw-bold">@((Model.PricePerDay * 0.9m).ToString("N0")) / ngày</td>
+                    </tr>
+                    <tr>
+                        <td>Trọn 1 tháng</td>
+                        <td class="text-primary fw-bold">Liên hệ</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h5 class="text-danger fw-bold mt-4">Hình Ảnh Thực Tế Chiếc @Model.Name mà bạn sẽ nhận:</h5>
+            <div class="border p-3 bg-light text-center">
+                <img src="@Model.ImageUrl" class="img-fluid" style="max-height: 400px;">
+            </div>
+        </div>
+
+        <!-- Cột PHẢI: Xe thuê nhiều nhất -->
+        <div class="col-lg-3">
+            <div class="sidebar-title">
+                <i class="bi bi-check-square-fill me-2"></i> THUÊ NHIỀU NHẤT (MOST RENTED)
+            </div>
+            @if (otherBikes != null)
+            {
+                foreach (var bike in otherBikes)
+                {
+                    <a href="/Home/Details/@bike.Id" class="other-bike-item">
+                        <img src="@bike.ImageUrl" width="80" class="me-2" style="object-fit: contain;">
+                        <div>
+                            <div class="fw-bold text-uppercase" style="font-size: 12px;">CHO THUÊ XE @bike.Name</div>
+                            <div class="text-danger" style="font-size: 12px;">Giá từ: @bike.PricePerDay.ToString("N0") vnđ</div>
+                        </div>
+                    </a>
+                }
+            }
+        </div>
+    </div>
+</div>

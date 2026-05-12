@@ -1,0 +1,106 @@
+﻿@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Thống Kê Doanh Thu";
+    var dailyStats = ViewBag.DailyStats as IEnumerable<dynamic>;
+}
+
+<style>
+    .card-counter {
+        border: none;
+        border-radius: 15px;
+        transition: 0.3s;
+        color: white;
+    }
+
+        .card-counter:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+    .bg-revenue {
+        background: linear-gradient(45deg, #ff4d6d, #ff85a2);
+    }
+
+    .bg-today {
+        background: linear-gradient(45deg, #4facfe, #00f2fe);
+    }
+
+    .bg-orders {
+        background: linear-gradient(45deg, #f093fb, #f5576c);
+    }
+</style>
+
+<div class="row g-4 mb-5">
+    <!-- Thẻ Tổng Doanh Thu -->
+    <div class="col-md-4">
+        <div class="card card-counter bg-revenue p-4 shadow-sm">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="text-uppercase small fw-bold opacity-75">Tổng Doanh Thu</h6>
+                    <h2 class="fw-bold mb-0">@ViewBag.TotalRevenue.ToString("N0") đ</h2>
+                </div>
+                <i class="bi bi-currency-dollar fs-1 opacity-50"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thẻ Doanh Thu Hôm Nay -->
+    <div class="col-md-4">
+        <div class="card card-counter bg-today p-4 shadow-sm">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="text-uppercase small fw-bold opacity-75">Hôm Nay</h6>
+                    <h2 class="fw-bold mb-0">@ViewBag.TodayRevenue.ToString("N0") đ</h2>
+                </div>
+                <i class="bi bi-calendar-check fs-1 opacity-50"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thẻ Doanh Thu Tháng Này -->
+    <div class="col-md-4">
+        <div class="card card-counter bg-orders p-4 shadow-sm">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="text-uppercase small fw-bold opacity-75">Tháng @DateTime.Now.Month</h6>
+                    <h2 class="fw-bold mb-0">@ViewBag.MonthRevenue.ToString("N0") đ</h2>
+                </div>
+                <i class="bi bi-graph-up-arrow fs-1 opacity-50"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-0 p-4 rounded-4">
+            <h5 class="fw-bold mb-4 border-bottom pb-2"><i class="bi bi-list-stars me-2"></i>Chi tiết doanh thu 7 ngày gần nhất</h5>
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Ngày</th>
+                        <th class="text-end">Doanh Thu Thu Được</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in dailyStats)
+                    {
+                        <tr>
+                            <td><i class="bi bi-calendar3 me-2 text-primary"></i> @item.Date.ToString("dd/MM/yyyy")</td>
+                            <td class="text-end fw-bold text-success">+ @item.Amount.ToString("N0") đ</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow-sm border-0 p-4 rounded-4 text-center bg-white h-100">
+            <h5 class="fw-bold mb-3">Tổng số đơn hàng</h5>
+            <div class="display-1 fw-bold text-danger mb-3">@ViewBag.TotalOrders</div>
+            <p class="text-muted">Bao gồm cả đơn mới và đơn đã hủy</p>
+            <a asp-controller="AdminBookings" asp-action="Index" class="btn btn-outline-danger rounded-pill w-100">Xem tất cả đơn hàng</a>
+        </div>
+    </div>
+</div>

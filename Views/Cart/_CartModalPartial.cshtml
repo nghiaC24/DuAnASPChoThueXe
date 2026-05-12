@@ -1,0 +1,36 @@
+﻿@model IEnumerable<DuAnASPChoThueXe.Models.CartItem>
+<div class="modal-header bg-light">
+    <h6 class="modal-title fw-bold">GIỎ HÀNG CỦA BẠN</h6>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+<div class="modal-body p-0">
+    <table class="table align-middle mb-0" style="font-size: 13px;">
+        <thead class="bg-light">
+            <tr>
+                <th>Hình Ảnh</th>
+                <th>Tên Sản Phẩm</th>
+                <th>Số Lượng</th>
+                <th class="text-end">Thành Tiền</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td><img src="@item.Motorbike?.ImageUrl" width="60" class="rounded"></td>
+                    <td class="fw-bold text-primary">Cho Thuê Xe @item.Motorbike?.Name</td>
+                    <td class="text-center">@item.Quantity</td>
+                    <td class="text-end text-danger fw-bold">@((item.Price * item.Quantity).ToString("N0")) vnđ</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="p-3 bg-light d-flex justify-content-between border-top">
+        <span class="fw-bold">Tạm tính:</span>
+        <span class="text-danger fw-bold">@Model.Sum(x => x.Price * x.Quantity).ToString("N0") vnđ</span>
+    </div>
+</div>
+<div class="modal-footer d-flex justify-content-between">
+    <a href="#" data-bs-dismiss="modal" class="text-danger text-decoration-none">« Tiếp tục mua hàng</a>
+    <a href="/Cart" class="btn btn-warning fw-bold text-white px-4" style="background:#f3801f">THANH TOÁN</a>
+</div>

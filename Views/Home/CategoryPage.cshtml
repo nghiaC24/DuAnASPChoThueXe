@@ -1,0 +1,77 @@
+﻿@model IEnumerable<DuAnASPChoThueXe.Models.Motorbike>
+@{
+    ViewData["Title"] = ViewBag.CategoryName;
+}
+
+<style>
+    .cat-hero {
+        background: linear-gradient(rgba(255, 133, 162, 0.6), rgba(255, 77, 109, 0.8)), url('@ViewBag.BannerImg') center/cover;
+        height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-align: center;
+        border-radius: 0 0 50px 50px;
+        margin-bottom: 50px;
+        box-shadow: 0 10px 30px rgba(255, 77, 109, 0.2);
+    }
+
+    .bike-card-custom {
+        border: none;
+        border-radius: 20px;
+        transition: 0.4s;
+        background: #fff;
+        padding: 20px;
+    }
+
+        .bike-card-custom:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 15px 35px rgba(255, 133, 162, 0.15);
+        }
+
+    .price-circle {
+        background: #fff0f3;
+        color: #ff4d6d;
+        padding: 5px 15px;
+        border-radius: 30px;
+        font-weight: 800;
+        display: inline-block;
+        margin-bottom: 15px;
+    }
+</style>
+
+<section class="cat-hero animate__animated animate__fadeIn">
+    <div class="container">
+        <h1 class="display-4 fw-bold text-uppercase">@ViewBag.CategoryName</h1>
+        <p class="fs-5 opacity-90">Cam kết xe đời mới, bảo dưỡng định kỳ, giao xe tận nơi nhanh chóng</p>
+    </div>
+</section>
+
+<div class="container py-4">
+    <div class="row g-4">
+        @if (Model.Any())
+        {
+            @foreach (var item in Model)
+            {
+                <div class="col-lg-3 col-md-6" data-aos="fade-up">
+                    <div class="card h-100 bike-card-custom shadow-sm text-center">
+                        <img src="@item.ImageUrl" class="img-fluid mb-3" style="height: 180px; object-fit: contain;">
+                        <h5 class="fw-bold">@item.Name</h5>
+                        <div class="price-circle">@item.PricePerDay.ToString("N0") đ/ngày</div>
+                        <button onclick="addToCart(@item.Id)" class="btn btn-danger w-100 rounded-pill fw-bold py-2 shadow-sm" style="background:#ff4d6d; border:none">
+                            THUÊ NGAY
+                        </button>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center py-5">
+                <h3 class="text-muted">Hiện chưa có xe trong danh mục này.</h3>
+                <a href="/" class="btn btn-outline-pink mt-3">Quay lại trang chủ</a>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,160 @@
+﻿@{
+    ViewData["Title"] = "Liên Hệ - KNP Rental";
+}
+
+<style>
+    .contact-banner {
+        background: linear-gradient(rgba(255, 240, 243, 0.8), rgba(255, 240, 243, 0.8)), url('https://img.freepik.com/free-photo/customer-service-operator-working-office_23-2148409028.jpg') center/cover;
+        padding: 80px 0;
+        text-align: center;
+        border-bottom: 5px solid #ff85a2;
+    }
+
+        .contact-banner h1 {
+            color: #ff4d6d;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+    .contact-info-box {
+        background: #fff;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(255, 133, 162, 0.1);
+        height: 100%;
+        border: 1px solid #fff0f3;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: start;
+        margin-bottom: 25px;
+    }
+
+    .info-icon {
+        width: 50px;
+        height: 50px;
+        background: #fff0f3;
+        color: #ff4d6d;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        margin-right: 15px;
+        flex-shrink: 0;
+    }
+
+    .btn-send {
+        background: #ff4d6d;
+        color: white;
+        border-radius: 30px;
+        padding: 12px 30px;
+        font-weight: bold;
+        border: none;
+    }
+
+        .btn-send:hover {
+            background: #333;
+        }
+
+    .map-container {
+        border-radius: 20px;
+        overflow: hidden;
+        border: 5px solid #fff0f3;
+    }
+</style>
+
+<!-- Banner -->
+<section class="contact-banner">
+    <div class="container">
+        <h1>Liên Hệ Với Chúng Tôi</h1>
+        <p class="fs-5 text-dark fw-bold">KNP Rental luôn sẵn sàng lắng nghe và hỗ trợ bạn</p>
+    </div>
+</section>
+
+<div class="container py-5">
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-pill px-4 mb-4" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row g-5">
+        <!-- Cột TRÁI: Thông tin liên hệ -->
+        <div class="col-lg-5">
+            <div class="contact-info-box">
+                <h3 class="fw-bold mb-4" style="color: #ff4d6d;">Thông Tin Liên Hệ</h3>
+
+                <div class="info-item">
+                    <div class="info-icon"><i class="bi bi-geo-alt-fill"></i></div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Địa chỉ:</h6>
+                        <p class="text-muted mb-0">115/ Lý Chính Thắng, P. Võ Thị Sáu, Quận 3, TP. Hồ Chí Minh</p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon"><i class="bi bi-telephone-fill"></i></div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Hotline / Zalo:</h6>
+                        <p class="text-danger fw-bold mb-0">0908 000 000</p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon"><i class="bi bi-envelope-at-fill"></i></div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Email:</h6>
+                        <p class="text-muted mb-0">knp_rental@yahoo.com</p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon"><i class="bi bi-clock-fill"></i></div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Giờ làm việc:</h6>
+                        <p class="text-muted mb-0">Thứ 2 - Chủ Nhật: 08:00 - 20:00</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cột PHẢI: Form gửi tin nhắn -->
+        <div class="col-lg-7">
+            <div class="p-4 border rounded-4 bg-light">
+                <h3 class="fw-bold mb-4">Gửi Tin Nhắn Cho KNP</h3>
+                <form asp-action="SendContact" method="post">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Họ tên của bạn</label>
+                            <input type="text" name="name" class="form-control rounded-3" placeholder="Nhập họ tên..." required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Số điện thoại</label>
+                            <input type="text" name="phone" class="form-control rounded-3" placeholder="Nhập số điện thoại..." required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Nội dung cần tư vấn</label>
+                            <textarea name="message" class="form-control rounded-3" rows="5" placeholder="Bạn muốn thuê loại xe nào, thời gian bao lâu..." required></textarea>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-send w-100">GỬI YÊU CẦU NGAY</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bản đồ Google Map -->
+    <div class="mt-5">
+        <h4 class="fw-bold mb-3 text-uppercase"><i class="bi bi-map-fill text-danger"></i> Vị trí của chúng tôi trên bản đồ</h4>
+        <div class="map-container">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.418420138927!2d106.6854199745173!3d10.779222659139595!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f308f972061%3A0x7d6a54948a32b265!2zTMO9IENow61uaCBUaOG6r25nLCBRdeG6rW4gMywgVGjDoG5oIHBo4buRIEjhu5MgQ2jDrSBNaW5oLCBWaeG7h3QgTmFt!5e0!3m2!1svi!2s!4v1715310000000!5m2!1svi!2s"
+                    width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,351 @@
+﻿@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Http
+@inject DuAnASPChoThueXe.Data.ApplicationDbContext _db
+@{
+    // Tự động đếm sản phẩm trong giỏ hàng
+    var cartCount = _db.CartItems.Sum(x => x.Quantity);
+
+    // Lấy thông tin từ Session
+    var userEmail = Context.Session.GetString("UserEmail");
+    var userName = Context.Session.GetString("UserName");
+    var userRole = Context.Session.GetString("UserRole");
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - KNP Rental - Future Mobility</title>
+
+    <!-- Thư viện CSS & Hiệu ứng -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <style>
+        :root {
+            --knp-pink: #ff85a2;
+            --knp-pink-dark: #ff4d6d;
+            --knp-pink-light: #fff0f3;
+            --knp-white: #ffffff;
+            --knp-glass: rgba(255, 255, 255, 0.7);
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* 1. TOP BAR - SLIM & CLEAN */
+        .top-bar {
+            background-color: var(--knp-pink-dark);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 500;
+            padding: 5px 0;
+            letter-spacing: 1px;
+        }
+
+        /* 2. MAIN NAVIGATION - GLASSMORPHISM */
+        .navbar-knp {
+            background: var(--knp-white);
+            border-bottom: 1px solid #eee;
+            transition: 0.4s;
+            padding: 15px 0;
+        }
+
+            .navbar-knp.scrolled {
+                background: var(--knp-glass);
+                backdrop-filter: blur(15px);
+                padding: 8px 0;
+                box-shadow: 0 10px 30px rgba(255, 77, 109, 0.1);
+            }
+
+        .nav-link {
+            color: #444 !important;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 10px 20px !important;
+            font-size: 13px;
+            transition: 0.3s;
+        }
+
+            .nav-link:hover {
+                color: var(--knp-pink-dark) !important;
+                background: var(--knp-pink-light);
+                border-radius: 50px;
+            }
+
+        /* 3. LOGO & BRAND */
+        .brand-logo {
+            height: 75px;
+            transition: 0.3s;
+        }
+
+        .navbar-knp.scrolled .brand-logo {
+            height: 60px;
+        }
+
+        /* 4. CART BOX NEON WHITE */
+        .cart-box-new {
+            background: #fff;
+            border: 2px solid var(--knp-pink-light);
+            border-radius: 50px;
+            padding: 8px 20px;
+            text-decoration: none;
+            color: #333;
+            transition: 0.3s;
+            position: relative;
+        }
+
+            .cart-box-new:hover {
+                border-color: var(--knp-pink-dark);
+                transform: scale(1.05);
+            }
+
+        .cart-badge {
+            background: var(--knp-pink-dark);
+            color: white;
+        }
+
+        /* 5. FOOTER DESIGN - DARK PINK */
+        .footer-future {
+            background: #2d0a1a;
+            color: #fff;
+            padding: 80px 0 30px 0;
+        }
+
+        .footer-title {
+            color: var(--knp-pink);
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+            border-left: 4px solid var(--knp-pink);
+            padding-left: 15px;
+        }
+
+        .map-frame {
+            border-radius: 20px;
+            border: 5px solid rgba(255,255,255,0.05);
+            overflow: hidden;
+        }
+
+        /* 6. FLOATING BUTTONS */
+        .float-contact {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+
+        .btn-float {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 15px;
+            background: white;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: 0.3s;
+        }
+
+            .btn-float:hover {
+                transform: translateY(-10px);
+                background: var(--knp-pink-dark);
+                color: white !important;
+            }
+
+        /* DROP DOWN CỦA ADMIN */
+        .admin-dropdown {
+            background: #fff1f5;
+            border-radius: 12px;
+            border: 1px solid var(--knp-pink-light);
+            overflow: hidden;
+        }
+
+            .admin-dropdown .dropdown-item {
+                font-weight: 600;
+                padding: 12px 20px;
+            }
+
+                .admin-dropdown .dropdown-item:hover {
+                    background: var(--knp-pink-dark);
+                    color: white;
+                }
+    </style>
+</head>
+<body>
+    <header>
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="container d-flex justify-content-between align-items-center">
+                <div class="animate__animated animate__fadeInLeft"><i class="bi bi-lightning-charge-fill me-2"></i> HỆ THỐNG ĐANG TRỰC TUYẾN: 08:00 - 20:00</div>
+                <div class="d-none d-md-block animate__animated animate__fadeInRight">
+                    <span class="me-4"><i class="bi bi-envelope-heart-fill me-1"></i> knp_rental@yahoo.com</span>
+                    <span class="fw-bold"><i class="bi bi-telephone-outbound-fill me-1"></i> HOTLINE: 0908 ooo ooo</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-knp sticky-top" id="mainNav">
+            <div class="container">
+                <a class="navbar-brand" href="/">
+                    <img src="/images/logo-knp.jpg" alt="Logo KNP" class="brand-logo rounded-3">
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="bi bi-list fs-1 text-pink-dark"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mx-auto">
+                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">TRANG CHỦ</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Home/About">GIỚI THIỆU</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Service" asp-action="Index">DỊCH VỤ</a></li>
+
+                        <!-- DANH SÁCH XE: NHẤN VÀO SẼ RA TRANG RIÊNG BIỆT -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">DANH SÁCH XE</a>
+                            <ul class="dropdown-menu shadow border-0 p-2 rounded-4">
+                                <li><a class="dropdown-item fw-bold rounded-3 mb-1" href="/Home/Scooters"><i class="bi bi-scooter me-2 text-danger"></i> XE TAY GA</a></li>
+                                <li><a class="dropdown-item fw-bold rounded-3" href="/Home/Manuals"><i class="bi bi-bicycle me-2 text-danger"></i> XE SỐ (XE MÁY)</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-center small fw-bold" href="/Home/Index">XEM TẤT CẢ</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Contact">LIÊN HỆ</a></li>
+                    </ul>
+
+                    <!-- User Account / Admin Section -->
+                    <div class="d-flex align-items-center">
+                        <a asp-controller="Cart" asp-action="Index" class="cart-box-new me-3">
+                            <i class="bi bi-bag-heart-fill fs-4 text-danger"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill cart-badge" id="header-cart-count">@cartCount</span>
+                        </a>
+
+                        @if (userEmail != null)
+                        {
+                            <div class="dropdown">
+                                <a class="nav-link dropdown-toggle fw-bold text-danger border rounded-pill px-3 bg-light" href="#" data-bs-toggle="dropdown">
+                                    @userName.ToUpper()
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end shadow admin-dropdown border-0 mt-2">
+                                    @if (userRole == "Admin")
+                                    {
+                                        <li class="text-center p-2 small fw-bold text-muted border-bottom mb-2">QUẢN TRỊ VIÊN</li>
+                                        <li><a class="dropdown-item" asp-controller="AdminDashboard" asp-action="Index"><i class="bi bi-grid-1x2 me-2"></i> THỐNG KÊ</a></li>
+                                        <li><a class="dropdown-item" asp-controller="AdminMotorbikes" asp-action="Index"><i class="bi bi-bicycle me-2"></i> QUẢN LÝ XE</a></li>
+                                        <li><a class="dropdown-item" asp-controller="AdminBookings" asp-action="Index"><i class="bi bi-file-earmark-check me-2"></i> ĐƠN THUÊ XE</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                    }
+                                    <li><a class="dropdown-item" href="#"><i class="bi bi-clock-history me-2"></i> Lịch sử thuê</a></li>
+                                    <li><a class="dropdown-item text-danger" asp-controller="Account" asp-action="Logout"><i class="bi bi-power me-2"></i> Đăng xuất</a></li>
+                                </ul>
+                            </div>
+                        }
+                        else
+                        {
+                            <a asp-controller="Account" asp-action="Login" class="btn btn-outline-danger rounded-pill fw-bold px-4 btn-sm">ĐĂNG NHẬP</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main role="main" style="min-height: 600px;">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="container mt-4 animate__animated animate__zoomIn">
+                <div class="alert alert-success border-0 shadow-sm text-center fw-bold rounded-pill p-3" style="background: #e1f5fe; color: #2e7d32;">
+                    <i class="bi bi-check-circle-fill me-2 fs-5"></i> @TempData["SuccessMessage"]
+                </div>
+            </div>
+        }
+        @RenderBody()
+    </main>
+
+    <!-- Professional Tech Footer -->
+    <footer class="footer-future mt-5">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-4" data-aos="fade-up">
+                    <img src="/images/logo-knp.jpg" alt="Logo" height="70" class="bg-white p-2 rounded-4 mb-4 shadow">
+                    <p class="opacity-75 lh-lg">
+                        KNP Rental định nghĩa lại trải nghiệm thuê xe máy tại Sài Gòn. Hệ thống tự động, xe đời mới và dịch vụ tận tâm 24/7.
+                    </p>
+                    <div class="d-flex gap-2 mt-4">
+                        <a href="#" class="btn-float text-primary m-0 shadow"><i class="bi bi-facebook fs-4"></i></a>
+                        <a href="#" class="btn-float text-danger m-0 shadow"><i class="bi bi-youtube fs-4"></i></a>
+                        <a href="#" class="btn-float text-dark m-0 shadow"><i class="bi bi-tiktok fs-4"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-3 px-lg-5" data-aos="fade-up" data-aos-delay="200">
+                    <h5 class="footer-title">CHÍNH SÁCH</h5>
+                    <ul class="list-unstyled lh-lg opacity-75 small">
+                        <li><a href="#" class="text-white text-decoration-none">Điều khoản sử dụng</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">Quy trình nhận xe</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">Chính sách bảo mật</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">Giải quyết khiếu nại</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-5" data-aos="fade-up" data-aos-delay="400">
+                    <h5 class="footer-title">VỊ TRÍ CHI NHÁNH</h5>
+                    <div class="map-frame shadow-lg">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.41!2d106.68!3d10.77!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zTMO9IENow61uaCBUaOG6r25n!5e0!3m2!1svi!2s!4v1715310000000" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                    </div>
+                </div>
+            </div>
+            <hr class="bg-white opacity-10 mt-5">
+            <div class="text-center small opacity-50">© 2024 - <span class="text-pink">KNP RENTAL INNOVATION</span>. ALL RIGHTS RESERVED.</div>
+        </div>
+    </footer>
+
+    <!-- Popup Giỏ Hàng -->
+    <div class="modal fade" id="cartModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content border-0 shadow-lg rounded-5 overflow-hidden" id="cartModalContent"></div></div></div>
+
+    <!-- Nút liên hệ nổi -->
+    <div class="float-contact">
+        <a href="https://zalo.me/0908630065" target="_blank" class="btn-float shadow-lg animate__animated animate__pulse animate__infinite"><img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" width="35"></a>
+        <a href="tel:0908630065" class="btn-float shadow-lg text-success"><i class="bi bi-telephone-fill fs-3"></i></a>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 1000, once: true });
+
+        // Hiệu ứng Navbar khi cuộn chuột
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 100) {
+                document.getElementById('mainNav').classList.add('scrolled');
+            } else {
+                document.getElementById('mainNav').classList.remove('scrolled');
+            }
+        });
+
+        // Hàm thêm giỏ hàng (AJAX)
+        function addToCart(id) {
+            $.ajax({
+                url: '/Cart/AddToCart', type: 'POST', data: { motorbikeId: id },
+                success: function (res) {
+                    if (res.success) {
+                        let c = parseInt($('#header-cart-count').text());
+                        $('#header-cart-count').text(c + 1).addClass('animate__animated animate__bounceIn');
+                        $('#cartModalContent').load('/Cart/GetCartPartial', function() { (new bootstrap.Modal(document.getElementById('cartModal'))).show(); });
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

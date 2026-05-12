@@ -1,0 +1,120 @@
+﻿@{
+    ViewData["Title"] = "Giới Thiệu Về KNP Rental";
+}
+
+<style>
+    .about-header {
+        background: linear-gradient(rgba(255, 240, 243, 0.8), rgba(255, 240, 243, 0.8)), url('https://img.freepik.com/free-photo/young-delivery-man-riding-scooter_23-2148905244.jpg') center/cover;
+        padding: 80px 0;
+        text-align: center;
+        border-bottom: 5px solid #ff85a2;
+    }
+
+        .about-header h1 {
+            color: #ff4d6d;
+            font-weight: 900;
+            font-size: 45px;
+            text-transform: uppercase;
+        }
+
+    .section-title {
+        color: #ff4d6d;
+        font-weight: bold;
+        border-left: 5px solid #ff4d6d;
+        padding-left: 15px;
+        margin-bottom: 25px;
+    }
+
+    .feature-box {
+        padding: 30px;
+        border-radius: 15px;
+        background: #fff;
+        box-shadow: 0 10px 30px rgba(255, 133, 162, 0.1);
+        transition: 0.3s;
+        border: 1px solid #fff0f3;
+        height: 100%;
+    }
+
+        .feature-box:hover {
+            transform: translateY(-10px);
+            border-color: #ff85a2;
+        }
+
+    .feature-icon {
+        font-size: 40px;
+        color: #ff4d6d;
+        margin-bottom: 15px;
+    }
+
+    .about-img {
+        border-radius: 20px;
+        box-shadow: 15px 15px 0px #fff0f3;
+    }
+
+    .highlight-pink {
+        color: #ff4d6d;
+        font-weight: bold;
+    }
+</style>
+
+<!-- Banner đầu trang -->
+<section class="about-header">
+    <div class="container">
+        <h1>Giới Thiệu KNP Rental</h1>
+        <p class="fs-5 text-dark fw-bold">Uy Tín - Chất Lượng - Tận Tâm Tại Sài Gòn</p>
+    </div>
+</section>
+
+<div class="container py-5">
+    <div class="row align-items-center mb-5">
+        <div class="col-lg-6">
+            <h2 class="section-title">Về Chúng Tôi</h2>
+            <p class="lead">Chào mừng bạn đến với <span class="highlight-pink">KNP Rental</span> – dịch vụ cho thuê xe máy hàng đầu tại TP.HCM.</p>
+            <p>Được thành lập với tâm huyết mang lại sự thuận tiện nhất cho khách du lịch và người dân địa phương, KNP Rental không chỉ cung cấp những chiếc xe máy mà còn mang lại sự an tâm tuyệt đối trên mỗi cung đường.</p>
+            <p>Với đội ngũ nhân viên trẻ trung, năng động và am hiểu đường phố Sài Gòn, chúng tôi cam kết mang đến dịch vụ <span class="highlight-pink">Giao xe tận nơi nhanh chóng</span> và thủ tục đơn giản nhất hiện nay.</p>
+        </div>
+        <div class="col-lg-6 text-center">
+            <img src="/images/logo-knp.png" alt="KNP Logo" class="about-img img-fluid" style="max-height: 350px;">
+        </div>
+    </div>
+
+    <!-- Tại sao chọn chúng tôi -->
+    <h2 class="section-title text-center mx-auto" style="max-width: 400px; border: none; border-bottom: 3px solid #ff4d6d; padding: 0 0 10px 0;">TẠI SAO CHỌN KNP?</h2>
+    <div class="row g-4 mt-2">
+        <div class="col-md-4">
+            <div class="feature-box text-center">
+                <i class="bi bi-shield-check-fill feature-icon"></i>
+                <h5 class="fw-bold">Xe Đời Mới & Sạch</h5>
+                <p class="text-muted small">Tất cả xe tại KNP đều được bảo dưỡng định kỳ tại hãng, máy êm, sạch sẽ và tiết kiệm xăng.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-box text-center">
+                <i class="bi bi-geo-alt-fill feature-icon"></i>
+                <h5 class="fw-bold">Giao Nhận Tận Nơi</h5>
+                <p class="text-muted small">Chúng tôi hỗ trợ giao xe tận nhà, khách sạn, sân bay Tân Sơn Nhất chỉ trong 15-30 phút.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-box text-center">
+                <i class="bi bi-clock-fill feature-icon"></i>
+                <h5 class="fw-bold">Hỗ Trợ 24/7</h5>
+                <p class="text-muted small">Đội ngũ kỹ thuật luôn sẵn sàng hỗ trợ bạn mọi lúc mọi nơi nếu gặp sự cố trên đường.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thông tin liên hệ nhanh -->
+    <div class="mt-5 p-5 bg-knp-pink rounded-4 text-center" style="background: #fff0f3;">
+        <h3 class="fw-bold">BẠN CẦN THUÊ XE NGAY?</h3>
+        <p>Liên hệ Hotline hoặc Zalo để được tư vấn và báo giá tốt nhất</p>
+        <div class="d-flex justify-content-center gap-3 mt-4">
+            <a href="tel:0908630065" class="btn btn-danger btn-lg px-5 rounded-pill shadow">
+                <i class="bi bi-telephone-fill"></i> 0908.630.065
+            </a>
+            <a href="https://zalo.me/0908630065" class="btn btn-primary btn-lg px-5 rounded-pill shadow">
+                <i class="bi bi-chat-dots-fill"></i> Nhắn Zalo
+            </a>
+        </div>
+    </div>
+</div>

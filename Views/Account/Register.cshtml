@@ -1,0 +1,36 @@
+﻿@model DuAnASPChoThueXe.Models.User
+@{
+    ViewData["Title"] = "Đăng Ký Tài Khoản";
+}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card border-0 shadow-sm rounded-4 p-4" style="border-top: 5px solid #ff85a2 !important;">
+                <h3 class="text-center fw-bold mb-4" style="color: #ff4d6d;">ĐĂNG KÝ THÀNH VIÊN</h3>
+                @if (ViewBag.Error != null)
+                {
+                    <div class="alert alert-danger small">@ViewBag.Error</div>
+                }
+
+                <form asp-action="Register" method="post">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small">Họ và Tên</label>
+                        <input asp-for="FullName" class="form-control rounded-pill px-3" required placeholder="Nguyễn Văn A">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small">Email</label>
+                        <input asp-for="Email" class="form-control rounded-pill px-3" required placeholder="email@gmail.com">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small">Mật khẩu</label>
+                        <input asp-for="Password" type="password" class="form-control rounded-pill px-3" required placeholder="******">
+                    </div>
+                    <button type="submit" class="btn btn-danger w-100 rounded-pill fw-bold py-2 mt-3" style="background:#ff4d6d">ĐĂNG KÝ NGAY</button>
+                </form>
+                <div class="text-center mt-4">
+                    <a asp-action="Login" class="small fw-bold text-decoration-none" style="color:#ff85a2">Quay lại Đăng nhập</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,25 @@
+﻿@model IEnumerable<DuAnASPChoThueXe.Models.Booking>
+<div class="container py-5">
+    <h3 class="fw-bold mb-4">Lịch sử đặt thuê xe</h3>
+    <table class="table table-hover bg-white shadow-sm rounded">
+        <thead class="table-dark">
+            <tr>
+                <th>Ngày đặt</th>
+                <th>Tên xe</th>
+                <th>Tổng tiền</th>
+                <th>Trạng thái</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.StartDate.ToString("dd/MM/yyyy")</td>
+                    <td>@item.Motorbike?.Name</td>
+                    <td>@item.TotalPrice.ToString("N0") đ</td>
+                    <td><span class="badge bg-warning text-dark">@item.Status</span></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

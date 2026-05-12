@@ -1,0 +1,79 @@
+﻿@model IEnumerable<DuAnASPChoThueXe.Models.Motorbike>
+@{
+    ViewData["Title"] = ViewBag.CategoryName;
+}
+
+<style>
+    .category-banner {
+        background: linear-gradient(45deg, #ff85a2, #ff4d6d);
+        padding: 60px 0;
+        text-align: center;
+        color: white;
+        margin-bottom: 50px;
+        border-radius: 0 0 50px 50px;
+        box-shadow: 0 10px 30px rgba(255, 77, 109, 0.2);
+    }
+
+    .bike-card-custom {
+        border: none;
+        border-radius: 20px;
+        transition: 0.4s;
+        background: #fff;
+        overflow: hidden;
+    }
+
+        .bike-card-custom:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 15px 35px rgba(255, 133, 162, 0.15);
+        }
+
+    .price-tag {
+        background: #fff0f3;
+        color: #ff4d6d;
+        padding: 5px 15px;
+        border-radius: 30px;
+        font-weight: 800;
+        display: inline-block;
+    }
+</style>
+
+<!-- Banner Tiêu Đề Trang Riêng -->
+<section class="category-banner animate__animated animate__fadeIn">
+    <div class="container">
+        <h1 class="display-4 fw-bold text-uppercase">@ViewBag.CategoryName</h1>
+        <p class="lead opacity-75">Khám phá dàn xe chất lượng cao, máy êm, giá rẻ tại KNP Rental</p>
+    </div>
+</section>
+
+<div class="container py-4">
+    <div class="row g-4">
+        @if (Model.Any())
+        {
+            @foreach (var item in Model)
+            {
+                <div class="col-lg-3 col-md-6" data-aos="fade-up">
+                    <div class="card h-100 bike-card-custom shadow-sm p-3">
+                        <div class="text-center mb-3">
+                            <img src="@item.ImageUrl" class="img-fluid" style="height: 180px; object-fit: contain;" alt="@item.Name">
+                        </div>
+                        <div class="card-body text-center">
+                            <h5 class="fw-bold mb-2">@item.Name</h5>
+                            <div class="price-tag mb-3">@item.PricePerDay.ToString("N0") đ/ngày</div>
+                            <button onclick="addToCart(@item.Id)" class="btn btn-danger w-100 rounded-pill fw-bold py-2" style="background:#ff4d6d; border:none">
+                                THUÊ NGAY
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center py-5">
+                <i class="bi bi-bicycle display-1 text-muted"></i>
+                <h3 class="mt-3 text-muted">Hiện chưa có xe trong danh mục này.</h3>
+                <a href="/" class="btn btn-outline-secondary rounded-pill mt-3">Quay lại trang chủ</a>
+            </div>
+        }
+    </div>
+</div>
