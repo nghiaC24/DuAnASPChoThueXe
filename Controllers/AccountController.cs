@@ -2,7 +2,9 @@
 using DuAnASPChoThueXe.Data;
 using DuAnASPChoThueXe.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore; // Thêm thư viện này để dùng Include
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace DuAnASPChoThueXe.Controllers
 {
@@ -10,6 +12,30 @@ namespace DuAnASPChoThueXe.Controllers
     {
         private readonly ApplicationDbContext _db;
         public AccountController(ApplicationDbContext db) { _db = db; }
+
+        // ==========================================
+        // 1. TRANG LỊCH SỬ THUÊ XE (MỚI THÊM)
+        // ==========================================
+        public async Task<IActionResult> RentalHistory()
+        {
+            // Kiểm tra xem khách đã đăng nhập chưa
+            var userName = HttpContext.Session.GetString("UserName");
+            if (string.IsNullOrEmpty(userName))
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Lấy danh sách đơn thuê của người dùng này
+            // Lọc theo CustomerName khớp với UserName trong Session
+            var history = await _db.Bookings
+                .Include(b => b.Motorbike)
+                .Include(b => b.Car)
+                .Where(b => b.CustomerName == userName)
+                .OrderByDescending(b => b.StartDate) // Đơn mới nhất hiện lên đầu
+                .ToListAsync();
+
+            return View(history);
+        }
 
         // Trang Đăng nhập
         public IActionResult Login(string returnUrl = null)
@@ -21,23 +47,19 @@ namespace DuAnASPChoThueXe.Controllers
         [HttpPost]
         public IActionResult Login(string email, string password, string returnUrl = null)
         {
-            // Tìm người dùng trong Database
             var user = _db.Users.FirstOrDefault(u => u.Email == email && u.Password == password);
 
             if (user != null)
             {
-                // Lưu thông tin vào Session để dùng ở Layout
                 HttpContext.Session.SetString("UserEmail", user.Email);
                 HttpContext.Session.SetString("UserName", user.FullName);
                 HttpContext.Session.SetString("UserRole", user.Role ?? "Customer");
 
-                // Nếu là ADMIN: Bay thẳng vào trang quản trị xe
                 if (user.Role == "Admin")
                 {
-                    return RedirectToAction("Index", "AdminMotorbikes");
+                    return RedirectToAction("Index", "AdminDashboard");
                 }
 
-                // Nếu là khách: Quay lại trang đang xem hoặc về trang chủ
                 if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                     return Redirect(returnUrl);
 
@@ -60,9 +82,7 @@ namespace DuAnASPChoThueXe.Controllers
                 return View(user);
             }
 
-            // Mặc định đăng ký mới là Khách (Customer)
             user.Role = "Customer";
-
             _db.Users.Add(user);
             _db.SaveChanges();
 
@@ -73,7 +93,7 @@ namespace DuAnASPChoThueXe.Controllers
         // Đăng xuất
         public IActionResult Logout()
         {
-            HttpContext.Session.Clear(); // Xóa sạch bộ nhớ đăng nhập
+            HttpContext.Session.Clear();
             return RedirectToAction("Index", "Home");
         }
     }

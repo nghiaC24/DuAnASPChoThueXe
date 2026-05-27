@@ -30,6 +30,16 @@ namespace DuAnASPChoThueXe.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime?>("ActualReturnDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CarId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CitizenId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("CustomerName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -41,8 +51,11 @@ namespace DuAnASPChoThueXe.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("MotorbikeId")
+                    b.Property<int?>("MotorbikeId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Province")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
@@ -56,9 +69,73 @@ namespace DuAnASPChoThueXe.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CarId");
+
                     b.HasIndex("MotorbikeId");
 
                     b.ToTable("Bookings");
+                });
+
+            modelBuilder.Entity("DuAnASPChoThueXe.Models.Car", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AvailableQuantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Brand")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("CurrentLat")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("CurrentLng")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LicensePlate")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("PricePerDay")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Seats")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TotalQuantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Transmission")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Cars");
                 });
 
             modelBuilder.Entity("DuAnASPChoThueXe.Models.CartItem", b =>
@@ -69,13 +146,19 @@ namespace DuAnASPChoThueXe.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("CarId")
+                        .HasColumnType("int");
+
                     b.Property<string>("CartId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("MotorbikeId")
+                    b.Property<string>("LicensePlate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("MotorbikeId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Price")
@@ -88,6 +171,8 @@ namespace DuAnASPChoThueXe.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CarId");
 
                     b.HasIndex("MotorbikeId");
 
@@ -143,19 +228,28 @@ namespace DuAnASPChoThueXe.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("AvailableQuantity")
+                        .HasColumnType("int");
+
                     b.Property<string>("Capacity")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
+                    b.Property<double?>("CurrentLat")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("CurrentLng")
+                        .HasColumnType("float");
+
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageUrl")
-                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LicensePlate")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -165,9 +259,15 @@ namespace DuAnASPChoThueXe.Migrations
                     b.Property<decimal>("PricePerDay")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("Suggestion")
+                    b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Suggestion")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TotalQuantity")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -207,22 +307,30 @@ namespace DuAnASPChoThueXe.Migrations
 
             modelBuilder.Entity("DuAnASPChoThueXe.Models.Booking", b =>
                 {
+                    b.HasOne("DuAnASPChoThueXe.Models.Car", "Car")
+                        .WithMany()
+                        .HasForeignKey("CarId");
+
                     b.HasOne("DuAnASPChoThueXe.Models.Motorbike", "Motorbike")
                         .WithMany()
-                        .HasForeignKey("MotorbikeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("MotorbikeId");
+
+                    b.Navigation("Car");
 
                     b.Navigation("Motorbike");
                 });
 
             modelBuilder.Entity("DuAnASPChoThueXe.Models.CartItem", b =>
                 {
+                    b.HasOne("DuAnASPChoThueXe.Models.Car", "Car")
+                        .WithMany()
+                        .HasForeignKey("CarId");
+
                     b.HasOne("DuAnASPChoThueXe.Models.Motorbike", "Motorbike")
                         .WithMany()
-                        .HasForeignKey("MotorbikeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("MotorbikeId");
+
+                    b.Navigation("Car");
 
                     b.Navigation("Motorbike");
                 });

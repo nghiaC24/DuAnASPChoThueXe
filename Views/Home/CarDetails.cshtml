@@ -1,0 +1,331 @@
+﻿@model DuAnASPChoThueXe.Models.Car
+@{
+    ViewData["Title"] = "Chi tiết " + Model.Name + " - KNP Rental";
+}
+
+<style>
+    :root {
+        --knp-pink: #ff4d6d;
+        --knp-pink-light: #fff0f3;
+        --knp-dark: #1a0b2e;
+    }
+
+    body {
+        background-color: #fcfcfc;
+        font-family: 'Space Grotesk', sans-serif;
+    }
+
+    /* Breadcrumb tinh tế */
+    .breadcrumb-custom {
+        background: transparent;
+        padding: 20px 0;
+    }
+
+    .breadcrumb-item a {
+        color: #888;
+        text-decoration: none;
+        font-weight: 500;
+        transition: 0.3s;
+    }
+
+        .breadcrumb-item a:hover {
+            color: var(--knp-pink);
+        }
+
+    /* Container chứa ảnh */
+    .image-showcase {
+        background: #fff;
+        border-radius: 40px;
+        padding: 40px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.05);
+        position: sticky;
+        top: 100px;
+        text-align: center;
+    }
+
+    .main-car-img {
+        width: 100%;
+        transition: transform 0.5s;
+        filter: drop-shadow(0 15px 30px rgba(0,0,0,0.1));
+    }
+
+    /* Hiệu ứng khi hết xe */
+    .grayscale-car {
+        filter: grayscale(100%) opacity(0.5) !important;
+    }
+
+    .out-of-stock-banner {
+        background: #fdf2f2;
+        color: #9b1c1c;
+        border: 1px solid #f8d7da;
+        padding: 15px;
+        border-radius: 20px;
+        margin-bottom: 25px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Chi tiết bên phải */
+    .car-info-box {
+        padding-left: 30px;
+    }
+
+    .brand-tag {
+        background: var(--knp-pink-light);
+        color: var(--knp-pink);
+        font-weight: 800;
+        padding: 8px 20px;
+        border-radius: 50px;
+        display: inline-block;
+        font-size: 13px;
+        letter-spacing: 2px;
+        margin-bottom: 15px;
+    }
+
+    .car-title {
+        font-size: 3.5rem;
+        font-weight: 900;
+        color: var(--knp-dark);
+        line-height: 1.1;
+        margin-bottom: 20px;
+    }
+
+    .price-large {
+        font-size: 2.5rem;
+        color: var(--knp-pink);
+        font-weight: 900;
+        margin-bottom: 30px;
+    }
+
+        .price-large small {
+            font-size: 1rem;
+            color: #888;
+            font-weight: 500;
+        }
+
+    /* Spec Tiles */
+    .spec-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        margin-bottom: 40px;
+    }
+
+    .spec-tile {
+        background: white;
+        border: 1px solid #eee;
+        padding: 20px;
+        border-radius: 25px;
+        text-align: center;
+        transition: 0.3s;
+    }
+
+        .spec-tile:hover {
+            border-color: var(--knp-pink);
+            box-shadow: 0 10px 25px rgba(255, 77, 109, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .spec-tile i {
+            font-size: 24px;
+            color: var(--knp-pink);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .spec-tile span {
+            font-size: 12px;
+            color: #888;
+            display: block;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .spec-tile strong {
+            font-size: 16px;
+            color: var(--knp-dark);
+            display: block;
+        }
+
+    .feature-list {
+        list-style: none;
+        padding: 0;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 40px;
+    }
+
+        .feature-list li {
+            font-size: 14px;
+            color: #444;
+            font-weight: 500;
+        }
+
+            .feature-list li i {
+                color: #2ecc71;
+                margin-right: 10px;
+            }
+
+    /* Nút đặt xe Neon */
+    .btn-book-now {
+        background: var(--knp-pink);
+        color: white;
+        border: none;
+        width: 100%;
+        padding: 20px;
+        border-radius: 50px;
+        font-weight: 800;
+        font-size: 18px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        box-shadow: 0 15px 35px rgba(255, 77, 109, 0.3);
+        transition: 0.3s;
+    }
+
+        .btn-book-now:hover:not([disabled]) {
+            background: var(--knp-dark);
+            color: white;
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(26, 11, 46, 0.3);
+        }
+
+        /* Style nút khi hết xe */
+        .btn-book-now:disabled {
+            background: #6c757d !important;
+            box-shadow: none !important;
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+</style>
+
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="breadcrumb-custom">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a href="/Home/Cars">Cho thuê ô tô</a></li>
+            <li class="breadcrumb-item active text-dark fw-bold">@Model.Name</li>
+        </ol>
+    </nav>
+
+    <div class="row g-5">
+        <!-- Cột trái: Hình ảnh -->
+        <div class="col-lg-7">
+            <div class="image-showcase animate__animated animate__fadeInLeft">
+                @if (Model.AvailableQuantity <= 0)
+                {
+                    <span class="badge bg-danger px-4 py-2 mb-3 rounded-pill fs-6 shadow fw-bold animate__animated animate__pulse animate__infinite">HIỆN ĐANG HẾT XE</span>
+                }
+
+                <img src="@Model.ImageUrl" class="main-car-img @(Model.AvailableQuantity <= 0 ? "grayscale-car" : "")" alt="@Model.Name">
+
+                <div class="mt-5 p-4 rounded-4 text-start" style="background: var(--knp-pink-light);">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-shield-check-fill fs-1 text-danger me-3"></i>
+                        <div>
+                            <h6 class="fw-bold mb-0">Bảo hiểm chuyến đi</h6>
+                            <p class="small mb-0 text-muted">Chuyến đi của bạn được bảo vệ trọn vẹn tại KNP Rental.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cột phải: Thông tin -->
+        <div class="col-lg-5">
+            <div class="car-info-box" data-aos="fade-up">
+                <span class="brand-tag">@Model.Brand.ToUpper() EDITION</span>
+                <h1 class="car-title">@Model.Name</h1>
+
+                <div class="price-large">
+                    @Model.PricePerDay.ToString("N0") <small>VNĐ / Ngày</small>
+                </div>
+
+                <!-- Thông báo nếu hết xe -->
+                @if (Model.AvailableQuantity <= 0)
+                {
+                    <div class="out-of-stock-banner animate__animated animate__shakeX">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i> Mẫu xe này hiện đã được thuê hết. Vui lòng quay lại sau!
+                    </div>
+                }
+
+                <!-- Thông số xe -->
+                <div class="spec-grid">
+                    <div class="spec-tile">
+                        <i class="bi bi-people"></i>
+                        <span>Số chỗ</span>
+                        <strong>@Model.Seats Chỗ</strong>
+                    </div>
+                    <div class="spec-tile">
+                        <i class="bi bi-gear-wide-connected"></i>
+                        <span>Hộp số</span>
+                        <strong>Tự động</strong>
+                    </div>
+                    <div class="spec-tile">
+                        <i class="bi bi-fuel-pump"></i>
+                        <span>Nhiên liệu</span>
+                        <strong>Xăng/Dầu</strong>
+                    </div>
+                </div>
+
+                <div class="desc-section mb-4">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-info-circle-fill text-danger me-2"></i>Mô tả xe</h5>
+                    <p class="desc-text text-muted">@Model.Description</p>
+                </div>
+
+                <div class="features-section mb-5">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-stars text-danger me-2"></i>Tiện nghi đi kèm</h5>
+                    <ul class="feature-list">
+                        <li><i class="bi bi-check-circle-fill text-success"></i>Máy lạnh cực mát</li>
+                        <li><i class="bi bi-check-circle-fill text-success"></i>Màn hình giải trí</li>
+                        <li><i class="bi bi-check-circle-fill text-success"></i>Bản đồ GPS</li>
+                        <li><i class="bi bi-check-circle-fill text-success"></i>Camera lùi/360</li>
+                        <li><i class="bi bi-check-circle-fill text-success"></i>Sát khuẩn sạch sẽ</li>
+                        <li><i class="bi bi-check-circle-fill text-success"></i>Cửa sổ trời</li>
+                    </ul>
+                </div>
+
+                <!-- Nút Đặt xe: Kiểm tra số lượng để hiển thị -->
+                @if (Model.AvailableQuantity > 0)
+                {
+                    <button onclick="addToCartCar(@Model.Id)" class="btn btn-book-now">
+                        <i class="bi bi-calendar-check me-2"></i> Tiến hành đặt xe ngay
+                    </button>
+                }
+                else
+                {
+                    <button class="btn btn-book-now" disabled>
+                        HẾT XE - VUI LÒNG QUAY LẠI SAU
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function addToCartCar(id) {
+        $.ajax({
+            url: '/Cart/AddToCart',
+            type: 'POST',
+            data: { carId: id },
+            success: function (res) {
+                if (res.success) {
+                    // Cập nhật số lượng trên header
+                    let countElement = $('#header-cart-count');
+                    let count = parseInt(countElement.text()) || 0;
+                    countElement.text(count + 1);
+
+                    // Hiển thị Popup giỏ hàng
+                    $('#cartModalContent').load('/Cart/GetCartPartial', function() {
+                        let myModal = new bootstrap.Modal(document.getElementById('cartModal'));
+                        myModal.show();
+                    });
+                }
+            }
+        });
+    }
+</script>

@@ -18,6 +18,8 @@ namespace DuAnASPChoThueXe.Data
 
         // 2. Danh sách xe máy
         public DbSet<Motorbike> Motorbikes { get; set; }
+        public DbSet<Car> Cars { get; set; }
+
 
         // 3. Tài khoản người dùng/thành viên
         public DbSet<User> Users { get; set; }

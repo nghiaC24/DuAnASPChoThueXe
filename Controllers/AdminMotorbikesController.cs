@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DuAnASPChoThueXe.Data;
 using DuAnASPChoThueXe.Models;
+using System.IO;
 
 namespace DuAnASPChoThueXe.Controllers
 {
@@ -17,28 +18,33 @@ namespace DuAnASPChoThueXe.Controllers
             _env = env;
         }
 
-        // 1. Danh sách xe
+        // Trang danh sách xe máy
         public async Task<IActionResult> Index()
         {
             var list = await _db.Motorbikes.Include(m => m.Category).ToListAsync();
             return View(list);
         }
 
-        // 2. Thêm mới xe
+        // Trang thêm xe mới (GET)
         public IActionResult Create()
         {
             ViewBag.Categories = new SelectList(_db.Categories, "Id", "Name");
             return View();
         }
 
+        // Xử lý thêm xe mới (POST)
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Motorbike bike, IFormFile? file)
         {
             if (file != null)
             {
                 string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
                 string path = Path.Combine(_env.WebRootPath, "images", fileName);
-                using (var stream = new FileStream(path, FileMode.Create)) { file.CopyTo(stream); }
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    file.CopyTo(stream);
+                }
                 bike.ImageUrl = "/images/" + fileName;
             }
             _db.Motorbikes.Add(bike);
@@ -46,34 +52,54 @@ namespace DuAnASPChoThueXe.Controllers
             return RedirectToAction("Index");
         }
 
-        // 3. Sửa xe
+        // Trang chỉnh sửa trạng thái (GET)
+        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var bike = await _db.Motorbikes.FindAsync(id);
-            ViewBag.Categories = new SelectList(_db.Categories, "Id", "Name", bike.CategoryId);
-            return View(bike);
+            var motorbike = await _db.Motorbikes.FindAsync(id);
+            if (motorbike == null) return NotFound();
+            return View(motorbike);
         }
 
+        // Xử lý lưu trạng thái Bật/Tắt (POST)
         [HttpPost]
-        public async Task<IActionResult> Edit(Motorbike bike, IFormFile? file)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, bool IsReady)
         {
-            if (file != null) // Nếu chọn ảnh mới
+            // Tìm xe gốc trong Database để bảo trì dữ liệu cũ
+            var motorbikeInDb = await _db.Motorbikes.FindAsync(id);
+
+            if (motorbikeInDb == null) return NotFound();
+
+            try
             {
-                string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                string path = Path.Combine(_env.WebRootPath, "images", fileName);
-                using (var stream = new FileStream(path, FileMode.Create)) { file.CopyTo(stream); }
-                bike.ImageUrl = "/images/" + fileName;
+                // CẬP NHẬT TRẠNG THÁI: 
+                // Nếu nút gạt (IsReady) là True -> Gán chữ "Sẵn sàng"
+                // Nếu nút gạt (IsReady) là False -> Gán chữ "Bảo trì"
+                motorbikeInDb.Status = IsReady ? "Sẵn sàng" : "Bảo trì";
+
+                _db.Update(motorbikeInDb);
+                await _db.SaveChangesAsync();
+
+                // Lưu thành công thì quay về trang danh sách
+                return RedirectToAction(nameof(Index));
             }
-            _db.Update(bike);
-            await _db.SaveChangesAsync();
-            return RedirectToAction("Index");
+            catch (Exception)
+            {
+                // Nếu có lỗi, hiện lại trang sửa với dữ liệu hiện tại
+                return View(motorbikeInDb);
+            }
         }
 
-        // 4. Xóa xe
+        // Xử lý xóa xe
         public async Task<IActionResult> Delete(int id)
         {
             var bike = await _db.Motorbikes.FindAsync(id);
-            if (bike != null) { _db.Motorbikes.Remove(bike); await _db.SaveChangesAsync(); }
+            if (bike != null)
+            {
+                _db.Motorbikes.Remove(bike);
+                await _db.SaveChangesAsync();
+            }
             return RedirectToAction("Index");
         }
     }

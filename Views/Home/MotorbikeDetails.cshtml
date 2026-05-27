@@ -1,0 +1,122 @@
+﻿@model DuAnASPChoThueXe.Models.Motorbike
+@{
+    ViewData["Title"] = "Chi tiết " + Model.Name;
+    // Kiểm tra trạng thái xe xe có sẵn sàng hay không
+    bool isReady = Model.Status == "Sẵn sàng";
+}
+
+<style>
+    .spec-tile-bike {
+        background: #fff;
+        border: 1px solid #eee;
+        padding: 25px;
+        border-radius: 25px;
+        text-align: center;
+        transition: 0.3s;
+        height: 100%;
+    }
+
+        .spec-tile-bike:hover {
+            border-color: #ff4d6d;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 77, 109, 0.1);
+        }
+
+        .spec-tile-bike i {
+            font-size: 28px;
+            color: #ff4d6d;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+    .grayscale-img {
+        filter: grayscale(100%);
+        opacity: 0.6;
+    }
+
+    .out-of-stock-alert {
+        background: #fdf2f2;
+        color: #9b1c1c;
+        border: 1px solid #f8d7da;
+        padding: 15px;
+        border-radius: 15px;
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+    /* Style biển số xe */
+    .plate-box {
+        background: #334155;
+        color: #fff;
+        padding: 5px 15px;
+        border-radius: 10px;
+        display: inline-block;
+        font-family: 'Space Grotesk';
+        letter-spacing: 1px;
+        border: 2px solid #e2e8f0;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row g-5 align-items-center">
+        <!-- Ảnh xe -->
+        <div class="col-lg-6" data-aos="fade-right">
+            <div class="p-5 bg-white shadow-lg rounded-5 text-center position-relative">
+                @if (!isReady)
+                {
+                    <span class="badge bg-danger position-absolute top-0 start-0 m-4 px-4 py-2 rounded-pill fs-6 shadow">ĐANG ĐƯỢC THUÊ</span>
+                }
+                <img src="@Model.ImageUrl" class="img-fluid animate__animated animate__zoomIn @(!isReady ? "grayscale-img" : "")" style="max-height: 450px; object-fit: contain;" onerror="this.src='/images/no-image.png'">
+            </div>
+        </div>
+
+        <!-- Thông tin -->
+        <div class="col-lg-6" data-aos="fade-left">
+            <div class="mb-2">
+                <span class="badge bg-pink-light text-danger text-uppercase fw-bold p-2 px-3 rounded-pill" style="background:#fff0f3">Xe máy đời mới</span>
+            </div>
+            <h1 class="display-4 fw-bold mb-2 text-dark">@Model.Name</h1>
+
+            <!-- HIỂN THỊ BIỂN SỐ XE -->
+            <div class="mb-4">
+                <small class="text-muted d-block text-uppercase fw-bold mb-1" style="font-size: 10px;">Biển số định danh:</small>
+                <div class="plate-box fw-bold">@Model.LicensePlate</div>
+            </div>
+
+            <h2 class="text-danger fw-bold mb-4">@Model.PricePerDay.ToString("N0") <small class="text-muted fs-6">VNĐ / Ngày</small></h2>
+
+            @if (!isReady)
+            {
+                <div class="out-of-stock-alert animate__animated animate__shakeX">
+                    <i class="bi bi-info-circle-fill me-2"></i> Rất tiếc, xe biển số <strong>@Model.LicensePlate</strong> hiện đang có khách thuê.
+                </div>
+            }
+
+            <!-- Specs Grid -->
+            <div class="row g-3 mb-4">
+                <div class="col-4"><div class="spec-tile-bike"><i class="bi bi-speedometer2"></i><small class="text-muted d-block">ĐỘNG CƠ</small><strong>@Model.Capacity</strong></div></div>
+                <div class="col-4"><div class="spec-tile-bike"><i class="bi bi-fuel-pump"></i><small class="text-muted d-block">NHIÊN LIỆU</small><strong>Xăng</strong></div></div>
+                <div class="col-4"><div class="spec-tile-bike"><i class="bi bi-shield-lock"></i><small class="text-muted d-block">BẢO HIỂM</small><strong>Có sẵn</strong></div></div>
+            </div>
+
+            <div class="mb-5">
+                <h5 class="fw-bold"><i class="bi bi-info-circle me-2 text-danger"></i>Mô tả xe:</h5>
+                <p class="text-muted lh-lg">@Model.Description</p>
+            </div>
+
+            @if (isReady)
+            {
+                <button type="button"
+                        onclick="addToCart(@Model.Id, 'motorbike')"
+                        class="btn btn-danger btn-lg w-100 rounded-pill fw-bold py-3 shadow animate__animated animate__pulse animate__infinite">
+                    THUÊ XE NGAY TẠI ĐÂY
+                </button>
+            }
+            else
+            {
+                <a href="/Home/Index" class="btn btn-outline-secondary w-100 py-3 rounded-pill fw-bold fs-5 shadow">
+                    XEM CÁC XE KHÁC CÒN TRỐNG
+                </a>
+            }
+        </div>
+    </div>
+</div>

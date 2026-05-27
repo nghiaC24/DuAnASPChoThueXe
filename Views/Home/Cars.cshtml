@@ -1,0 +1,141 @@
+﻿@model IEnumerable<DuAnASPChoThueXe.Models.Car>
+@{
+    ViewData["Title"] = "Thuê Ô Tô Cao Cấp";
+}
+
+<style>
+    :root {
+        --knp-pink: #ff4d6d;
+    }
+
+    .car-card {
+        border-radius: 25px;
+        overflow: hidden;
+        transition: 0.4s;
+        position: relative;
+    }
+
+        .car-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1) !important;
+        }
+
+    /* Hiệu ứng Hết xe */
+    .sold-out-overlay {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background: #dc3545;
+        color: white;
+        padding: 5px 15px;
+        border-radius: 10px;
+        font-weight: 800;
+        font-size: 12px;
+        z-index: 10;
+        border: 2px solid white;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .car-grayscale {
+        filter: grayscale(1);
+        opacity: 0.5;
+    }
+
+    .price-tag {
+        color: var(--knp-pink);
+        font-size: 1.5rem;
+        font-weight: 800;
+    }
+
+    .badge-seats {
+        background: #212529;
+        color: white;
+        border-radius: 10px;
+        font-weight: 700;
+        padding: 6px 15px;
+    }
+
+    .btn-group-custom {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+        width: 100%;
+    }
+
+    .btn-rent-car:disabled {
+        background: #6c757d !important;
+        border-color: #6c757d !important;
+        cursor: not-allowed;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h6 class="text-uppercase fw-bold mb-2" style="color: var(--knp-pink); letter-spacing: 2px;">Premium Car Rental</h6>
+        <h2 class="display-6 fw-bold">HỆ THỐNG THUÊ Ô TÔ TỰ LÁI</h2>
+    </div>
+
+    <div class="row g-4">
+        @foreach (var car in Model)
+        {
+            <div class="col-lg-4 col-md-6">
+                <div class="card car-card h-100 shadow-sm">
+                    @if (car.AvailableQuantity <= 0)
+                    {
+                        <div class="sold-out-overlay">HẾT XE</div>
+                    }
+                    <div class="car-img-container position-relative text-center p-3">
+                        <img src="@car.ImageUrl" class="img-fluid @(car.AvailableQuantity <= 0 ? "car-grayscale" : "")"
+                             style="height: 180px; object-fit: contain;">
+                        <span class="position-absolute top-0 start-0 m-3 badge badge-seats">@car.Seats CHỖ</span>
+                    </div>
+
+                    <div class="card-body px-4 pt-2">
+                        <span class="badge bg-light text-danger border border-danger-subtle rounded-pill px-3 mb-2">@car.Brand.ToUpper()</span>
+                        <h5 class="fw-bold text-dark">@car.Name</h5>
+
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div>
+                                <small class="text-muted d-block">Giá từ</small>
+                                <span class="price-tag">@car.PricePerDay.ToString("N0") đ</span>
+                            </div>
+                        </div>
+
+                        <div class="btn-group-custom">
+                            <a href="/Home/CarDetails/@car.Id" class="btn btn-outline-danger w-50 rounded-pill fw-bold">CHI TIẾT</a>
+
+                            @if (car.AvailableQuantity > 0)
+                            {
+                                <button onclick="addToCartCar(@car.Id)" class="btn btn-danger w-50 rounded-pill fw-bold shadow-sm">ĐẶT NGAY</button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-danger w-50 rounded-pill fw-bold btn-rent-car" disabled>HẾT XE</button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    // Hàm JS của bạn giữ nguyên
+    function addToCartCar(id) {
+        $.ajax({
+            url: '/Cart/AddToCart',
+            type: 'POST',
+            data: { carId: id },
+            success: function (res) {
+                if (res.success) {
+                    $('#cartModalContent').load('/Cart/GetCartPartial', function() {
+                        new bootstrap.Modal(document.getElementById('cartModal')).show();
+                        let count = parseInt($('#header-cart-count').text()) || 0;
+                        $('#header-cart-count').text(count + 1);
+                    });
+                }
+            }
+        });
+    }
+</script>

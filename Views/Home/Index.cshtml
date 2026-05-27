@@ -2,24 +2,98 @@
     ViewData["Title"] = "KNP Rental - Innovative Solutions";
 }
 
-<!-- Thư viện hiệu ứng chuyển động khi cuộn trang -->
+<!-- Thư viện hiệu ứng -->
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 
 <style>
     :root {
         --dark-purple: #0f051d;
         --neon-pink: #ff4d6d;
         --glass-bg: rgba(255, 255, 255, 0.05);
+        --glass-border: rgba(255, 255, 255, 0.1);
     }
 
     body {
         background-color: var(--dark-purple);
         color: white;
         overflow-x: hidden;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-family: 'Space Grotesk', sans-serif;
     }
 
-    /* 1. Hero Section - Thay bằng ảnh banner-chinh.jpg */
+    /* Fix phần Car Showcase */
+    .car-premium-section {
+        padding: 120px 0;
+        background: radial-gradient(circle at 80% 50%, rgba(255, 77, 109, 0.1) 0%, var(--dark-purple) 60%);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .car-display-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 450px;
+    }
+
+    .car-main-img {
+        width: 100%;
+        max-width: 800px;
+        filter: drop-shadow(0 20px 50px rgba(255, 77, 109, 0.4));
+        transition: 0.5s;
+        z-index: 2;
+        position: relative;
+    }
+
+    .car-premium-section:hover .car-main-img {
+        transform: scale(1.08) translateX(30px);
+    }
+
+    /* Floating Specs */
+    .floating-spec {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(12px);
+        border: 1px solid var(--glass-border);
+        padding: 12px 20px;
+        border-radius: 18px;
+        z-index: 3;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        animation: floating 3s ease-in-out infinite;
+    }
+
+    .spec-top {
+        top: 0;
+        right: 10%;
+    }
+
+    .spec-mid {
+        top: 40%;
+        left: -5%;
+        animation-delay: 1s;
+    }
+
+    .spec-bottom {
+        bottom: 5%;
+        right: 20%;
+        animation-delay: 0.5s;
+    }
+
+    .floating-spec h5 {
+        color: var(--neon-pink);
+        font-weight: 800;
+        margin: 0;
+        font-size: 16px;
+    }
+
+    .floating-spec span {
+        font-size: 10px;
+        text-transform: uppercase;
+        opacity: 0.6;
+    }
+
+    /* Hero Section */
     .hero-container {
         height: 100vh;
         background: linear-gradient(rgba(15, 5, 29, 0.5), rgba(15, 5, 29, 0.8)), url('/images/banner-chinh.jpg') center/cover;
@@ -27,81 +101,61 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        text-align: center;
     }
 
     .hero-logo-text {
-        font-size: 80px;
+        font-size: clamp(40px, 8vw, 80px);
         font-weight: 900;
         letter-spacing: 15px;
         background: linear-gradient(to right, #fff, #ff85a2);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        margin-bottom: 10px;
         text-transform: uppercase;
     }
 
-    /* 2. Section "Our Mission" - Thay bằng ảnh anh-mission.jpg */
+    /* Mission Section */
     .section-mission {
-        padding: 120px 0;
+        padding: 150px 0;
         background: url('/images/anh-mission.jpg') center/cover fixed;
         position: relative;
     }
 
     .glass-card {
-        background: rgba(0, 0, 0, 0.7);
-        backdrop-filter: blur(15px);
+        background: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(20px);
         border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 40px;
         padding: 60px;
-        max-width: 850px;
+        max-width: 800px;
         margin: 0 auto;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.5);
     }
 
-    .title-line {
-        width: 80px;
-        height: 4px;
-        background: var(--neon-pink);
-        margin: 25px 0;
-    }
-
-    /* 3. Nút bấm */
     .btn-explore {
         border: 2px solid white;
         color: white;
-        padding: 15px 45px;
+        padding: 12px 40px;
         border-radius: 50px;
         font-weight: bold;
-        text-transform: uppercase;
-        transition: 0.4s;
         text-decoration: none;
         display: inline-block;
-        margin-top: 30px;
+        transition: 0.3s;
+        margin-top: 20px;
     }
 
         .btn-explore:hover {
             background: white;
             color: var(--dark-purple);
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 30px rgba(255,255,255,0.4);
             transform: scale(1.05);
         }
 
-    .floating {
-        animation: float 4s ease-in-out infinite;
-    }
-
-    @@keyframes float {
-        0% {
-            transform: translateY(0px);
+    @@keyframes floating {
+        0%, 100% {
+            transform: translateY(0);
         }
 
         50% {
             transform: translateY(-15px);
-        }
-
-        100% {
-            transform: translateY(0px);
         }
     }
 </style>
@@ -112,29 +166,49 @@
         <h1 class="hero-logo-text">KNP RENTAL</h1>
         <p class="text-uppercase fw-bold" style="letter-spacing: 5px; opacity: 0.8;">Future of Mobility</p>
     </div>
-    <div class="mt-5 floating">
-        <i class="bi bi-chevron-double-down fs-1" style="color: var(--neon-pink)"></i>
-    </div>
 </section>
 
-<!-- SECTION 2: OUR MISSION -->
-<section class="section-mission">
+<!-- SECTION 2: LUXURY DISPLAY -->
+<section class="car-premium-section">
     <div class="container">
-        <div class="glass-card" data-aos="fade-up">
-            <h2 class="display-3 fw-bold">Our Mission</h2>
-            <div class="title-line"></div>
-            <p class="lead" style="line-height: 1.8; opacity: 0.9;">
-                Tại <strong>KNP Rental</strong>, sứ mệnh của chúng tôi là tái định nghĩa trải nghiệm di chuyển tại Sài Gòn.
-                Chúng tôi không chỉ cung cấp phương tiện, mà còn mang đến những giải pháp công nghệ hiện đại,
-                giúp mọi hành trình của bạn trở nên an toàn, nhanh chóng và đầy cảm hứng.
-            </p>
-            <a href="/Home/Index" class="btn-explore shadow">Khám phá ngay</a>
+        <div class="row align-items-center">
+            <div class="col-lg-5" data-aos="fade-right">
+                <h6 class="text-uppercase fw-bold mb-3" style="color: var(--neon-pink); letter-spacing: 3px;">Premium Experience</h6>
+                <h2 class="display-4 fw-bold mb-4">THUÊ Ô TÔ <br> ĐẲNG CẤP THẾ GIỚI</h2>
+                <p class="opacity-75 mb-5 lead">Trải nghiệm những dòng xe sedan, SUV hạng sang mới nhất 2024 với dịch vụ hoàn hảo.</p>
+                <a href="/Home/Cars" class="btn-explore">Khám phá bộ sưu tập</a>
+            </div>
+            <div class="col-lg-7">
+                <div class="car-display-wrapper">
+                    <!-- Bạn nhớ đổi lại tên file ảnh xe thật của bạn ở đây -->
+                    <img src="/images/vision.jpg" alt="Luxury Car" class="car-main-img" data-aos="fade-left">
+
+                    <div class="floating-spec spec-top"><span>Hệ thống</span><h5>SMART DRIVE</h5></div>
+                    <div class="floating-spec spec-mid"><span>An toàn</span><h5>5 SAO NCAP</h5></div>
+                    <div class="floating-spec spec-bottom"><span>Tiện nghi</span><h5>LUXURY INTERIOR</h5></div>
+                </div>
+            </div>
         </div>
     </div>
 </section>
 
-<!-- SECTION 3: ADVANTAGES - Thay bằng ảnh anh-uudiem.jpg -->
-<section class="py-5" style="background: #080212;">
+<!-- SECTION 3: MISSION -->
+<section class="section-mission">
+    <div class="container text-center">
+        <div class="glass-card" data-aos="fade-up">
+            <h2 class="display-4 fw-bold">Our Mission</h2>
+            <div style="width: 80px; height: 4px; background: var(--neon-pink); margin: 20px auto;"></div>
+            <p class="lead" style="line-height: 1.8;">
+                Tại <strong>KNP Rental</strong>, sứ mệnh của chúng tôi là tái định nghĩa trải nghiệm di chuyển tại Sài Gòn.
+                Chúng tôi không chỉ cung cấp phương tiện, mà còn mang đến những giải pháp công nghệ hiện đại.
+            </p>
+            <a href="/Home/Index" class="btn-explore">Khám phá ngay</a>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 4: ADVANTAGES (CÁI NÀY LÀ CÁI BẠN ĐANG THIẾU) -->
+<section class="py-5" style="background: #080212; border-top: 1px solid rgba(255,255,255,0.05);">
     <div class="container py-5">
         <div class="row align-items-center g-5">
             <div class="col-md-6" data-aos="fade-right">
@@ -142,27 +216,23 @@
                 <div class="mt-5">
                     <div class="mb-5 border-start border-3 border-secondary ps-4">
                         <h4 class="fw-bold text-white">01. Uy Tín Tuyệt Đối</h4>
-                        <p class="text-secondary">Dẫn đầu trong lĩnh vực thuê xe với hơn 200+ đầu xe đời mới nhất 2024.</p>
+                        <p class="text-secondary small">Dẫn đầu trong lĩnh vực thuê xe với hơn 200+ đầu xe đời mới nhất 2024.</p>
                     </div>
                     <div class="mb-5 border-start border-3 border-secondary ps-4">
                         <h4 class="fw-bold text-white">02. Minh Bạch & Công Nghệ</h4>
-                        <p class="text-secondary">Hợp đồng điện tử ký kết ngay trên smartphone. Giá thuê công khai, cam kết không phát sinh.</p>
+                        <p class="text-secondary small">Hợp đồng điện tử ký kết ngay trên smartphone. Giá thuê công khai, cam kết không phát sinh.</p>
                     </div>
                 </div>
             </div>
             <div class="col-md-6 text-center" data-aos="fade-left">
-                <!-- Chỗ này dùng ảnh anh-uudiem.jpg của bạn -->
-                <img src="/images/anh-uudiem.jpg" class="img-fluid rounded-5 shadow-lg border border-secondary border-opacity-25" style="border-radius: 30px;">
+                <!-- Chỉnh lại ảnh ưu điểm cho to ra -->
+                <img src="/images/anh-uudiem.jpg" class="img-fluid rounded-5 shadow-lg border border-secondary border-opacity-25" style="border-radius: 30px; max-height: 400px; width: 100%; object-fit: cover;">
             </div>
         </div>
     </div>
 </section>
 
-<!-- Script khởi tạo hiệu ứng cuộn -->
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
-    AOS.init({
-        duration: 1200,
-        once: true
-    });
+    AOS.init({ duration: 1200, once: true });
 </script>

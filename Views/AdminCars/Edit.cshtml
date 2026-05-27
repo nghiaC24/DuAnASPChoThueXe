@@ -1,0 +1,104 @@
+﻿@model DuAnASPChoThueXe.Models.Car
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Chỉnh Sửa Trạng Thái Ô Tô";
+}
+
+<div class="container py-5">
+    <!-- Card có style giống hệt trang Create -->
+    <div class="card shadow border-0 rounded-4 p-4 animate__animated animate__fadeIn">
+        <h3 class="fw-bold mb-4 text-primary">Cập Nhật Trạng Thái Xe: @Model.Name</h3>
+
+        <form asp-action="Edit" method="post">
+            <!-- ID ẩn để xác định xe cần sửa -->
+            <input type="hidden" asp-for="Id" />
+
+            <div class="row g-3">
+                <!-- Các ô thông tin hiển thị ở chế độ Readonly (Chỉ xem) -->
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Tên Xe</label>
+                    <input asp-for="Name" class="form-control rounded-3 bg-light" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Thương Hiệu</label>
+                    <input asp-for="Brand" class="form-control rounded-3 bg-light" readonly>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Số Chỗ</label>
+                    <input value="@Model.Seats Chỗ" class="form-control rounded-3 bg-light" readonly>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-bold text-primary">Biển Số Xe</label>
+                    <input asp-for="LicensePlate" class="form-control rounded-3 bg-light fw-bold text-uppercase" readonly>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Giá Thuê / Ngày</label>
+                    <div class="input-group">
+                        <input value="@Model.PricePerDay.ToString("N0")" class="form-control rounded-3 bg-light" readonly>
+                        <span class="input-group-text bg-light">VNĐ</span>
+                    </div>
+                </div>
+
+                <!-- Phần hiển thị ảnh xe hiện tại (Giống vị trí trang Create) -->
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Hình Ảnh Hiện Tại</label>
+                    <div class="p-2 border rounded-3 bg-white text-center">
+                        <img src="@Model.ImageUrl" class="img-fluid rounded-3" style="max-height: 220px; object-fit: contain;">
+                    </div>
+                </div>
+
+                <!-- PHẦN QUAN TRỌNG: NÚT BẬT TẮT TRẠNG THÁI -->
+                <div class="col-md-6">
+                    <label class="form-label fw-bold text-danger">TRẠNG THÁI CHO THUÊ (Bật/Tắt)</label>
+                    <div class="p-4 rounded-4 text-center d-flex flex-column align-items-center justify-content-center h-75"
+                         style="background: #fff0f3; border: 2px dashed #ff4d6d;">
+
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" asp-for="IsAvailable"
+                                   style="width: 5rem; height: 2.5rem; cursor: pointer;" />
+                        </div>
+
+                        <div id="statusText" class="fw-bold fs-5 @(Model.IsAvailable ? "text-success" : "text-muted")">
+                            @(Model.IsAvailable ? "● ĐANG HIỂN THỊ TRÊN WEB" : "○ ĐANG KHÓA (ẨN KHỎI WEB)")
+                        </div>
+                        <small class="text-muted mt-2">Gạt nút trên để thay đổi sự hiện diện của xe này.</small>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label fw-bold">Mô Tả Xe</label>
+                    <textarea class="form-control rounded-3 bg-light" rows="3" readonly>@Model.Description</textarea>
+                </div>
+            </div>
+
+            <!-- Nút bấm style giống Create -->
+            <div class="mt-4 pt-3 border-top d-flex gap-2">
+                <button type="submit" class="btn btn-primary px-5 rounded-pill fw-bold shadow">
+                    <i class="bi bi-cloud-check me-2"></i> LƯU THAY ĐỔI
+                </button>
+                <a asp-action="Index" class="btn btn-light px-5 rounded-pill fw-bold border">QUAY LẠI</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Hiệu ứng đổi chữ ngay lập tức khi admin gạt nút
+        const toggle = document.querySelector('.form-check-input');
+        const text = document.getElementById('statusText');
+
+        toggle.addEventListener('change', function() {
+            if(this.checked) {
+                text.innerHTML = "● ĐANG HIỂN THỊ TRÊN WEB";
+                text.className = "fw-bold fs-5 text-success animate__animated animate__pulse";
+            } else {
+                text.innerHTML = "○ ĐANG KHÓA (ẨN KHỎI WEB)";
+                text.className = "fw-bold fs-5 text-muted animate__animated animate__pulse";
+            }
+        });
+    </script>
+}

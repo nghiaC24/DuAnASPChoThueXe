@@ -5,7 +5,9 @@
 
 <style>
     .cat-hero {
-        background: linear-gradient(rgba(255, 133, 162, 0.6), rgba(255, 77, 109, 0.8)), url('@ViewBag.BannerImg') center/cover;
+        background: linear-gradient(rgba(255, 133, 162, 0.6), rgba(255, 77, 109, 0.8)), url('@ViewBag.BannerImg');
+        background-position: center;
+        background-size: cover; /* Tách thuộc tính cover ra dòng riêng */
         height: 300px;
         display: flex;
         align-items: center;
@@ -59,9 +61,20 @@
                         <img src="@item.ImageUrl" class="img-fluid mb-3" style="height: 180px; object-fit: contain;">
                         <h5 class="fw-bold">@item.Name</h5>
                         <div class="price-circle">@item.PricePerDay.ToString("N0") đ/ngày</div>
-                        <button onclick="addToCart(@item.Id)" class="btn btn-danger w-100 rounded-pill fw-bold py-2 shadow-sm" style="background:#ff4d6d; border:none">
-                            THUÊ NGAY
-                        </button>
+                        <!-- THAY THẾ ĐOẠN NÚT BẤM CŨ BẰNG ĐOẠN NÀY -->
+                        <div class="d-flex gap-2 mt-3 px-2">
+                            <!-- Nút Chi tiết dẫn sang trang chi tiết xe máy -->
+                            <a href="/Home/MotorbikeDetails/@item.Id" class="btn btn-outline-danger w-50 rounded-pill fw-bold py-2"
+                               style="font-size: 12px; border: 2px solid #ff4d6d; color: #ff4d6d; text-decoration: none; transition: 0.3s;">
+                                CHI TIẾT
+                            </a>
+
+                            <!-- Nút Thuê ngay -->
+                            <button onclick="addToCart(@item.Id)" class="btn btn-danger w-50 rounded-pill fw-bold py-2 shadow-sm"
+                                    style="font-size: 12px; background-color: #ff4d6d; border: none; color: white;">
+                                THUÊ NGAY
+                            </button>
+                        </div>
                     </div>
                 </div>
             }

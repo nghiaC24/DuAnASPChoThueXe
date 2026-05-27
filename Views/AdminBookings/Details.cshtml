@@ -1,13 +1,12 @@
 ﻿@model DuAnASPChoThueXe.Models.Booking
 @{
     Layout = "_AdminLayout";
-    ViewData["Title"] = "Chi Tiết Đơn Hàng #" + Model.Id;
+    ViewData["Title"] = "Chi Tiết Đơn Hàng #" + Model?.Id;
 }
 
 <style>
-    /* Style dành riêng cho lúc in hóa đơn */
     @@media print {
-        #sidebar, .btn-print, .btn-back, .badge-status-update {
+        #sidebar, .btn-print, .btn-back, #map-container, .badge-status-update {
             display: none !important;
         }
 
@@ -25,91 +24,172 @@
 
     .invoice-box {
         background: #fff;
-        padding: 40px;
+        padding: 30px;
         border-radius: 15px;
-        box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
         border: 1px solid #eee;
     }
 
     .invoice-header {
-        border-bottom: 2px solid #ff4d6d;
+        border-bottom: 2px solid #0060a9;
         padding-bottom: 20px;
-        margin-bottom: 30px;
+        margin-bottom: 20px;
+    }
+
+    .table-invoice thead {
+        background: #f8fafc;
+    }
+
+    /* Style riêng cho biển số xe */
+    .license-plate-badge {
+        background-color: #334155;
+        color: #fff;
+        padding: 5px 15px;
+        border-radius: 5px;
+        font-family: 'Space Grotesk', sans-serif;
+        letter-spacing: 1px;
+        border: 2px solid #e2e8f0;
+        display: inline-block;
+        font-weight: bold;
     }
 </style>
 
-<div class="mb-4">
-    <a asp-action="Index" class="btn btn-light rounded-pill btn-back">
-        <i class="bi bi-arrow-left me-2"></i> Quay lại danh sách
+<div class="mb-3 d-flex justify-content-between align-items-center">
+    <a asp-action="Index" class="btn btn-light rounded-pill btn-back shadow-sm">
+        <i class="bi bi-arrow-left me-2"></i> Quay lại
     </a>
-    <button onclick="window.print()" class="btn btn-danger rounded-pill px-4 ms-2 btn-print shadow">
-        <i class="bi bi-printer me-2"></i> IN HÓA ĐƠN (XUẤT PDF)
+    <button onclick="window.print()" class="btn btn-primary rounded-pill px-4 btn-print shadow">
+        <i class="bi bi-printer me-2"></i> IN HÓA ĐƠN
     </button>
 </div>
 
 <div class="invoice-box container-fluid">
-    <!-- Header Hóa Đơn -->
+    <!-- Header -->
     <div class="row invoice-header align-items-center">
-        <div class="col-6">
-            <img src="/images/logo-knp.jpg" height="80" class="mb-2">
-            <h4 class="fw-bold mb-0">KNP MOTORBIKE RENTAL</h4>
-            <p class="text-muted small mb-0">Địa chỉ: 115/21 Lý Chính Thắng, Quận 3, TP.HCM</p>
-            <p class="text-muted small">Hotline: 0908 630 065</p>
+        <div class="col-md-6">
+            <div class="d-flex align-items-center mb-2">
+                <img src="/images/logo-knp.jpg" height="50" class="me-3">
+                <h4 class="fw-bold m-0">KNP RENTAL ADMIN</h4>
+            </div>
+            <p class="text-muted small mb-0">Hệ thống quản lý vận hành chuyên nghiệp</p>
         </div>
-        <div class="col-6 text-end">
-            <h2 class="fw-bold text-uppercase" style="color: #ff4d6d;">Hóa Đơn Thuê Xe</h2>
-            <p class="mb-0">Mã đơn: <strong>#@Model.Id</strong></p>
-            <p>Ngày đặt: @Model.StartDate.ToString("dd/MM/yyyy HH:mm")</p>
-        </div>
-    </div>
-
-    <!-- Thông tin khách hàng -->
-    <div class="row mb-5">
-        <div class="col-6">
-            <h6 class="text-uppercase fw-bold text-secondary border-bottom pb-2 mb-3">Thông tin khách thuê:</h6>
-            <p class="mb-1">Họ tên: <strong>@Model.CustomerName</strong></p>
-            <p class="mb-1">Số điện thoại: <strong>@Model.CustomerPhone</strong></p>
-            <p class="mb-1">Trạng thái đơn: <span class="badge bg-warning text-dark">@Model.Status</span></p>
-        </div>
-        <div class="col-6 text-end">
-            <h6 class="text-uppercase fw-bold text-secondary border-bottom pb-2 mb-3">Hình thức thanh toán:</h6>
-            <p>Thanh toán khi nhận xe (Tiền mặt)</p>
+        <div class="col-md-6 text-md-end mt-3 mt-md-0">
+            <h2 class="fw-bold text-uppercase m-0" style="color: #0060a9;">Hóa Đơn Thuê Xe</h2>
+            <p class="mb-0 text-muted">Mã đơn: <strong>#@Model.Id</strong></p>
+            <p class="small text-muted">Ngày đặt: @Model.StartDate.ToString("dd/MM/yyyy HH:mm")</p>
         </div>
     </div>
 
-    <!-- Chi tiết xe thuê -->
-    <table class="table table-bordered align-middle text-center mb-5">
-        <thead class="table-light">
-            <tr>
-                <th>Ảnh xe</th>
-                <th>Tên loại xe</th>
-                <th>Phân khối</th>
-                <th>Đơn giá/Ngày</th>
-                <th>Thành tiền</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><img src="@Model.Motorbike?.ImageUrl" width="100" class="rounded"></td>
-                <td class="fw-bold">@Model.Motorbike?.Name</td>
-                <td>@Model.Motorbike?.Capacity</td>
-                <td>@Model.Motorbike?.PricePerDay.ToString("N0") đ</td>
-                <td class="fw-bold text-danger">@Model.TotalPrice.ToString("N0") đ</td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="row mb-4 g-4">
+        <!-- Thông tin khách -->
+        <div class="col-md-6">
+            <div class="p-3 bg-light rounded-3 h-100 border-start border-4 border-primary">
+                <h6 class="text-uppercase fw-bold text-dark mb-3 small">Thông tin khách thuê:</h6>
+                <p class="mb-1">Họ tên: <strong>@Model.CustomerName</strong></p>
+                <p class="mb-1">Số điện thoại: <strong>@Model.CustomerPhone</strong></p>
+                <p class="mb-1">Số CCCD: <strong class="text-primary">@Model.CitizenId</strong></p>
+                <p class="mb-2">Trạng thái: <span class="badge bg-primary rounded-pill">@Model.Status</span></p>
 
-    <!-- Tổng kết & Chữ ký -->
-    <div class="row">
-        <div class="col-7">
-            <p class="fst-italic small">* Lưu ý: Quý khách vui lòng kiểm tra xe kỹ trước khi nhận. Đơn giá chưa bao gồm tiền thế chân (3.000.000đ).</p>
+                <!-- HIỂN THỊ BIỂN SỐ TẠI ĐÂY -->
+                @{
+                    var vPlate = Model.Car?.LicensePlate ?? Model.Motorbike?.LicensePlate ?? "CHƯA CÓ";
+                }
+                <div class="mt-2">
+                    <span class="small text-muted text-uppercase d-block mb-1">Biển số xe thuê:</span>
+                    <div class="license-plate-badge">@vPlate</div>
+                </div>
+            </div>
         </div>
-        <div class="col-5 text-end">
-            <h4 class="fw-bold">TỔNG CỘNG: <span class="text-danger">@Model.TotalPrice.ToString("N0") đ</span></h4>
-            <div class="mt-5">
-                <p class="mb-5 fw-bold">Người lập hóa đơn</p>
-                <p class="mt-5 text-muted">(Ký và ghi rõ họ tên)</p>
+
+        <!-- Vị trí GPS -->
+        <div class="col-md-6">
+            <div class="p-3 bg-light rounded-3 h-100 border-start border-4 border-success" id="map-container">
+                <h6 class="text-uppercase fw-bold text-dark mb-3 small">Vị trí xe hiện tại (GPS):</h6>
+                @{
+                    var vehicle = (dynamic)Model.Car ?? Model.Motorbike;
+                    var lat = vehicle?.CurrentLat;
+                    var lng = vehicle?.CurrentLng;
+                }
+
+                @if (lat != null && lng != null)
+                {
+                    <div id="map" style="height: 180px; border-radius: 10px;" class="shadow-sm border"></div>
+                    <div class="mt-2 text-end">
+                        <a href="https://www.google.com/maps?q=@lat,@lng" target="_blank" class="text-decoration-none small fw-bold text-success">
+                            <i class="bi bi-geo-alt"></i> Mở bản đồ lớn
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <div class="d-flex align-items-center justify-content-center h-75 text-muted small border border-dashed rounded-3 p-4">
+                        <i class="bi bi-info-circle me-2"></i> Xe này hiện chưa có dữ liệu định vị GPS.
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Chi tiết dịch vụ -->
+    <div class="table-responsive">
+        <table class="table table-bordered align-middle text-center mb-4 table-invoice">
+            <thead>
+                <tr class="small text-uppercase fw-bold text-muted">
+                    <th style="width: 15%">Ảnh xe</th>
+                    <th>Tên xe & Biển số</th> <!-- Sửa tiêu đề -->
+                    <th>Loại</th>
+                    <th>Đơn giá/Ngày</th>
+                    <th>Thành tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    var vImg = Model.Car?.ImageUrl ?? Model.Motorbike?.ImageUrl;
+                    var vName = Model.Car?.Name ?? Model.Motorbike?.Name;
+                    var vType = Model.Car != null ? "Ô tô" : "Xe máy";
+                    var vPrice = Model.Car?.PricePerDay ?? Model.Motorbike?.PricePerDay ?? 0;
+                }
+                <tr>
+                    <td><img src="@vImg" width="100" class="rounded shadow-sm" onerror="this.src='/images/no-image.png'"></td>
+                    <td>
+                        <div class="fw-bold fs-5">@vName</div>
+                        <div class="mt-1"><span class="badge bg-dark px-3 py-2">@vPlate</span></div> <!-- Biển số trong bảng -->
+                    </td>
+                    <td><span class="badge bg-light text-dark border">@vType</span></td>
+                    <td class="fw-bold">@vPrice.ToString("N0") đ</td>
+                    <td class="fw-bold text-danger fs-4">@Model.TotalPrice.ToString("N0") đ</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="row align-items-center">
+        <div class="col-md-7">
+            <p class="fst-italic small text-muted">* Vị trí xe chỉ hiển thị khi xe được gắn thiết bị định vị và đang hoạt động.</p>
+        </div>
+        <div class="col-md-5 text-md-end">
+            <div class="p-3 bg-primary text-white rounded-3 shadow-sm d-inline-block">
+                <span class="text-uppercase small fw-bold opacity-75">Tổng cộng thanh toán</span>
+                <h3 class="fw-bold m-0">@Model.TotalPrice.ToString("N0") đ</h3>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    @if (Model.Car?.CurrentLat != null || Model.Motorbike?.CurrentLat != null)
+    {
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                var vLat = @(Model.Car?.CurrentLat ?? Model.Motorbike?.CurrentLat ?? 0);
+                var vLng = @(Model.Car?.CurrentLng ?? Model.Motorbike?.CurrentLng ?? 0);
+
+                var map = L.map('map').setView([vLat, vLng], 15);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+                L.marker([vLat, vLng]).addTo(map).bindPopup("Vị trí xe hiện tại").openPopup();
+            });
+        </script>
+    }
+}

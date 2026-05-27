@@ -1,0 +1,103 @@
+﻿@model DuAnASPChoThueXe.Models.Motorbike
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Cập Nhật Trạng Thái Xe Máy";
+}
+
+<div class="container py-4">
+    <!-- Card chính style giống Ô tô -->
+    <div class="card shadow border-0 rounded-4 p-4 animate__animated animate__fadeIn">
+        <h3 class="fw-bold mb-4 text-primary">Cập Nhật Trạng Thái: @Model.Name</h3>
+
+        <form asp-action="Edit" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+
+            <div class="row g-4">
+                <!-- CỘT TRÁI: THÔNG TIN XE (KHÓA LẠI) -->
+                <div class="col-md-7">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-muted small text-uppercase">Tên xe máy</label>
+                        <input class="form-control bg-light rounded-3" value="@Model.Name" readonly>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label class="form-label fw-bold text-primary small text-uppercase">Biển số</label>
+                            <input class="form-control bg-light fw-bold text-primary" value="@Model.LicensePlate" readonly>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-bold text-muted small text-uppercase">Phân khối</label>
+                            <input class="form-control bg-light" value="@Model.Capacity" readonly>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-muted small text-uppercase">Giá thuê / ngày</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0">₫</span>
+                            <input class="form-control bg-light border-start-0" value="@Model.PricePerDay.ToString("N0")" readonly>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-muted small text-uppercase">Mô tả chi tiết</label>
+                        <textarea class="form-control bg-light" rows="3" readonly>@Model.Description</textarea>
+                    </div>
+                </div>
+
+                <!-- CỘT PHẢI: ẢNH VÀ NÚT GẠT -->
+                <div class="col-md-5">
+                    <div class="mb-4 text-center">
+                        <label class="form-label fw-bold d-block text-start">HÌNH ẢNH XE</label>
+                        <div class="p-2 border rounded-4 bg-white shadow-sm">
+                            <img src="@Model.ImageUrl" class="img-fluid rounded-3" style="max-height: 200px; object-fit: contain;" onerror="this.src='/images/no-image.png'">
+                        </div>
+                    </div>
+
+                    <!-- KHU VỰC NÚT GẠT QUAN TRỌNG -->
+                    <div class="p-4 rounded-4 text-center shadow-sm" style="background: #fff0f3; border: 2px dashed #ff4d6d;">
+                        <label class="form-label fw-bold d-block mb-3 text-danger">TRẠNG THÁI HOẠT ĐỘNG</label>
+
+                        <div class="form-check form-switch d-flex justify-content-center">
+                            <!-- Quan trọng: Checked nếu Status là "Sẵn sàng" -->
+                            <input class="form-check-input" type="checkbox" name="IsReady" value="true"
+                                   style="width: 4.5rem; height: 2.2rem; cursor: pointer;"
+                                   @(Model.Status == "Sẵn sàng" ? "checked" : "") />
+                        </div>
+
+                        <!-- Sửa logic hiện chữ ở đây -->
+                        <div id="statusText" class="fw-bold fs-5 mt-3 @(Model.Status == "Sẵn sàng" ? "text-success" : "text-muted")">
+                            @(Model.Status == "Sẵn sàng" ? "● ĐANG SẴN SÀNG (HIỆN TRÊN WEB)" : "○ ĐANG BẢO TRÌ / KHÓA (ẨN KHỎI WEB)")
+                        </div>
+                    
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nút bấm -->
+            <div class="mt-4 pt-4 border-top d-flex gap-2 justify-content-end">
+                <a asp-action="Index" class="btn btn-light px-5 rounded-pill border fw-bold">QUAY LẠI</a>
+                <button type="submit" class="btn btn-primary px-5 rounded-pill fw-bold shadow">
+                    XÁC NHẬN CẬP NHẬT
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const toggle = document.querySelector('.form-check-input');
+        const text = document.getElementById('statusText');
+        toggle.addEventListener('change', function() {
+            if(this.checked) {
+                text.innerHTML = "● ĐANG SẴN SÀNG";
+                text.className = "fw-bold fs-5 mt-3 text-success";
+            } else {
+                text.innerHTML = "○ ĐANG BẢO TRÌ / KHÓA";
+                text.className = "fw-bold fs-5 mt-3 text-muted";
+            }
+        });
+    </script>
+}

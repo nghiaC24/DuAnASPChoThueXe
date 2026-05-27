@@ -1,0 +1,229 @@
+﻿@model IEnumerable<DuAnASPChoThueXe.Models.Car>
+@{
+    ViewData["Title"] = "Quản lý Ô tô";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    /* Giữ nguyên các Style của bạn */
+    .car-card {
+        background: white;
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+        margin-bottom: 25px;
+        border-left: 6px solid #0060a9;
+    }
+
+        .car-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+    .car-img-container {
+        position: relative;
+        height: 180px;
+        overflow: hidden;
+    }
+
+    .car-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .status-badge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        padding: 5px 12px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 700;
+        color: white;
+        z-index: 10;
+    }
+
+    .bg-ready {
+        background: #10b981;
+    }
+    /* Xanh: Còn xe */
+    .bg-out {
+        background: #ef4444;
+    }
+    /* Đỏ: Hết xe */
+    .brand-tag {
+        background: #e1effe;
+        color: #0060a9;
+        padding: 4px 12px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .seat-tag {
+        background: #fff7ed;
+        color: #c2410c;
+        padding: 4px 12px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .price-large {
+        color: #0060a9;
+        font-size: 1.4rem;
+        font-weight: 800;
+    }
+
+    .btn-action-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+        border: 1px solid #e2e8f0;
+        color: #64748b;
+        background: white;
+        text-decoration: none;
+    }
+
+    .btn-gps-car {
+        background: #f0fdf4;
+        color: #15803d;
+        border: 1px solid #dcfce7;
+    }
+
+        .btn-gps-car:hover {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+    .btn-action-circle:hover {
+        background: #f8fafc;
+        color: #0060a9;
+        border-color: #0060a9;
+    }
+
+    .btn-delete:hover {
+        background: #fef2f2;
+        color: #dc2626;
+        border-color: #fca5a5;
+    }
+
+    .add-new-floating {
+        background: #0060a9;
+        color: white;
+        padding: 12px 25px;
+        border-radius: 15px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        box-shadow: 0 4px 12px rgba(0, 96, 169, 0.3);
+    }
+
+    .qty-info {
+        font-size: 12px;
+        font-weight: 600;
+        margin-top: 8px;
+    }
+</style>
+
+<div class="container-fluid">
+    <!-- Header Section -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <h2 class="fw-bold text-dark m-0">Quản Lý Ô Tô</h2>
+            <p class="text-muted small">Kiểm soát trạng thái kho và định vị xe tự lái GPS</p>
+        </div>
+        <a href="/AdminCars/Create" class="add-new-floating">
+            <i class="bi bi-plus-lg me-2"></i> Thêm ô tô mới
+        </a>
+    </div>
+
+    <!-- Grid Danh sách Xe -->
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-12 col-md-6 col-xl-4">
+                <div class="car-card shadow-sm">
+                    <div class="row g-0">
+                        <div class="col-5 col-md-12 car-img-container">
+                            <!-- ĐÃ SỬA: Kiểm tra IsAvailable thay vì AvailableQuantity -->
+                            @if (item.IsAvailable)
+                            {
+                                <span class="status-badge bg-ready">CÒN XE</span>
+                            }
+                            else
+                            {
+                                <span class="status-badge bg-out">HẾT XE</span>
+                            }
+
+                            <img src="@item.ImageUrl" class="car-img" onerror="this.src='/images/no-car.png'">
+                            <div class="position-absolute bottom-0 start-0 p-2">
+                                <span class="badge bg-dark bg-opacity-75 rounded-pill">ID: @item.Id</span>
+                            </div>
+                        </div>
+
+                        <div class="col-7 col-md-12 p-3">
+                            <div class="mb-2">
+                                <h5 class="fw-bold text-dark mb-1">@item.Name</h5>
+                                <div class="d-flex gap-2 flex-wrap mb-2">
+                                    <span class="brand-tag">@item.Brand</span>
+                                    <span class="seat-tag"><i class="bi bi-people-fill me-1"></i> @item.Seats Chỗ</span>
+                                </div>
+
+                                <!-- HIỂN THỊ BIỂN SỐ XE -->
+                                <div class="small fw-bold mb-1">
+                                    <span class="text-muted small">Biển số:</span>
+                                    <span class="text-primary">@item.LicensePlate</span>
+                                </div>
+
+                                <!-- ĐÃ SỬA: Cập nhật màu sắc chữ kho dựa trên IsAvailable -->
+                                <div class="qty-info">
+                                    <span class="text-muted">Trạng thái: </span>
+                                    <span class="@(item.IsAvailable ? "text-success" : "text-danger")">
+                                        @(item.IsAvailable ? "Đang sẵn dụng" : "Hiện đang khóa")
+                                    </span>
+                                </div>
+                            </div>
+
+                            <hr class="my-3 opacity-25">
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="text-muted small fw-bold text-uppercase" style="font-size: 10px;">Giá thuê/ngày</div>
+                                    <div class="price-large">@item.PricePerDay.ToString("N0") <small class="fs-6">đ</small></div>
+                                </div>
+
+                                <div class="d-flex gap-2">
+                                    @if (item.CurrentLat.HasValue && item.CurrentLng.HasValue)
+                                    {
+                                        <a href="https://www.google.com/maps?q=@item.CurrentLat,@item.CurrentLng" target="_blank"
+                                           class="btn-action-circle btn-gps-car" title="Xem GPS">
+                                            <i class="bi bi-geo-alt-fill fs-5"></i>
+                                        </a>
+                                    }
+
+                                    <a href="/AdminCars/Edit/@item.Id" class="btn-action-circle" title="Bật/Tắt trạng thái">
+                                        <i class="bi bi-toggle-on fs-5"></i>
+                                    </a>
+                                    <a href="/AdminCars/Delete/@item.Id" class="btn-action-circle btn-delete"
+                                       title="Xóa xe" onclick="return confirm('Bạn chắc chắn muốn xóa?')">
+                                        <i class="bi bi-trash3 fs-5"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

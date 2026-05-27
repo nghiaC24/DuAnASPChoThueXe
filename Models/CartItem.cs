@@ -8,11 +8,19 @@ namespace DuAnASPChoThueXe.Models
         [Key]
         public int Id { get; set; }
 
-        // ID của xe máy được thêm vào giỏ
-        public int MotorbikeId { get; set; }
+        // 1. QUAN TRỌNG: Sửa MotorbikeId thành kiểu int? (nullable) 
+        // để một món hàng có thể không cần có xe máy (nếu nó là ô tô)
+        public int? MotorbikeId { get; set; }
 
         [ForeignKey("MotorbikeId")]
         public virtual Motorbike? Motorbike { get; set; }
+        public string? LicensePlate { get; set; }
+
+        // 2. THÊM MỚI: Liên kết với bảng Ô tô
+        public int? CarId { get; set; }
+
+        [ForeignKey("CarId")]
+        public virtual Car? Car { get; set; }
 
         [Display(Name = "Số lượng")]
         public int Quantity { get; set; } = 1;
@@ -21,11 +29,9 @@ namespace DuAnASPChoThueXe.Models
         [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
 
-        // Thời gian thuê dự kiến (nếu cần lưu trong giỏ hàng)
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
 
-        // ID của Session hoặc User để phân biệt giỏ hàng của từng người
         public string? CartId { get; set; }
     }
 }

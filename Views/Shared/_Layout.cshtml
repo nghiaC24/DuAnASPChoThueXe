@@ -222,6 +222,35 @@
                                 <li><a class="dropdown-item text-center small fw-bold" href="/Home/Index">XEM TẤT CẢ</a></li>
                             </ul>
                         </li>
+                        <li class="nav-item dropdown">
+                            <!-- Thay text-primary bằng màu hồng đậm -->
+                            <a class="nav-link dropdown-toggle fw-bold" href="#" data-bs-toggle="dropdown" style="color: var(--knp-pink-dark) !important;">
+                                CHO THUÊ Ô TÔ
+                            </a>
+                            <ul class="dropdown-menu shadow border-0 p-2 rounded-4">
+                                <li>
+                                    <a class="dropdown-item fw-bold rounded-3 mb-1" href="/Home/Cars?type=4">
+                                        <i class="bi bi-car-front-fill me-2" style="color: var(--knp-pink-dark);"></i> XE 4 CHỖ
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item fw-bold rounded-3 mb-1" href="/Home/Cars?type=7">
+                                        <i class="bi bi-truck-front-fill me-2" style="color: var(--knp-pink-dark);"></i> XE 7 CHỖ
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item fw-bold rounded-3" href="/Home/Cars?type=luxury">
+                                        <i class="bi bi-gem me-2" style="color: var(--knp-pink-dark);"></i> XE SANG / ĐÁM CƯỚI
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item text-center small fw-bold" href="/Home/Cars" style="color: var(--knp-pink-dark);">
+                                        XEM TẤT CẢ Ô TÔ
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
                         <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Contact">LIÊN HỆ</a></li>
                     </ul>
 
@@ -247,7 +276,9 @@
                                         <li><a class="dropdown-item" asp-controller="AdminBookings" asp-action="Index"><i class="bi bi-file-earmark-check me-2"></i> ĐƠN THUÊ XE</a></li>
                                         <li><hr class="dropdown-divider"></li>
                                     }
-                                    <li><a class="dropdown-item" href="#"><i class="bi bi-clock-history me-2"></i> Lịch sử thuê</a></li>
+                                    <a class="dropdown-item" asp-controller="Account" asp-action="History">
+                                        <i class="bi bi-clock-history me-2"></i> Lịch sử thuê
+                                    </a>
                                     <li><a class="dropdown-item text-danger" asp-controller="Account" asp-action="Logout"><i class="bi bi-power me-2"></i> Đăng xuất</a></li>
                                 </ul>
                             </div>
@@ -319,35 +350,78 @@
         <a href="tel:0908630065" class="btn-float shadow-lg text-success"><i class="bi bi-telephone-fill fs-3"></i></a>
     </div>
 
-    <!-- Scripts -->
+    <!-- 1. Nạp các thư viện bắt buộc (Phải nằm trên cùng) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script>
-        AOS.init({ duration: 1000, once: true });
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-        // Hiệu ứng Navbar khi cuộn chuột
-        window.addEventListener('scroll', function() {
-            if (window.scrollY > 100) {
-                document.getElementById('mainNav').classList.add('scrolled');
-            } else {
-                document.getElementById('mainNav').classList.remove('scrolled');
+    <script>
+        // Khởi tạo hiệu ứng AOS
+        $(document).ready(function() {
+            if (typeof AOS !== 'undefined') {
+                AOS.init({ duration: 1000, once: true });
             }
         });
 
-        // Hàm thêm giỏ hàng (AJAX)
-        function addToCart(id) {
+        // Hiệu ứng Navbar khi cuộn
+        window.addEventListener('scroll', function() {
+            var nav = document.getElementById('mainNav');
+            if (nav) {
+                if (window.scrollY > 100) nav.classList.add('scrolled');
+                else nav.classList.remove('scrolled');
+            }
+        });
+        function addToCart(id, type = 'motorbike') {
+            let dataObj = {};
+            if (type === 'motorbike') dataObj.motorbikeId = id;
+            else dataObj.carId = id;
+
             $.ajax({
-                url: '/Cart/AddToCart', type: 'POST', data: { motorbikeId: id },
+                url: '/Cart/AddToCart',
+                type: 'POST',
+                data: dataObj,
                 success: function (res) {
                     if (res.success) {
-                        let c = parseInt($('#header-cart-count').text());
+                        // 1. Cập nhật số lượng trên icon giỏ hàng
+                        let c = parseInt($('#header-cart-count').text()) || 0;
                         $('#header-cart-count').text(c + 1).addClass('animate__animated animate__bounceIn');
-                        $('#cartModalContent').load('/Cart/GetCartPartial', function() { (new bootstrap.Modal(document.getElementById('cartModal'))).show(); });
+
+                        // 2. Hiện thông báo đẹp (Sẽ không tự mất trừ khi nhấn OK)
+                        Swal.fire({
+                            title: 'Đã giữ chỗ xe!',
+                            text: 'Xe đã được thêm vào giỏ hàng và tạm khóa để chờ bạn thanh toán.',
+                            icon: 'success',
+                            confirmButtonText: 'Tiếp tục',
+                            confirmButtonColor: '#ff4d6d',
+                            showCancelButton: true,
+                            cancelButtonText: 'Xem giỏ hàng',
+                        }).then((result) => {
+                            if (!result.isConfirmed) {
+                                // Nếu nhấn "Xem giỏ hàng" thì mở Modal
+                                $('#cartModalContent').load('/Cart/GetCartPartial', function() {
+                                    new bootstrap.Modal(document.getElementById('cartModal')).show();
+                                });
+                            }
+                        });
+
+                        // 3. Thay vì reload trang, ta ẩn cái xe đó trên giao diện ngay lập tức
+                        // (Để làm được điều này bạn cần xem Bước 3 bên dưới)
+                        $(`#bike-card-${id}`).fadeOut(1000);
+
+                    } else if (res.isNotLoggedIn) {
+                        Swal.fire('Yêu cầu đăng nhập', 'Vui lòng đăng nhập để thuê xe', 'warning').then(() => {
+                            window.location.href = "/Account/Login";
+                        });
+                    } else {
+                        Swal.fire('Lỗi', res.message, 'error');
                     }
+                },
+                error: function () {
+                    Swal.fire('Lỗi kết nối', 'Máy chủ đang bận, vui lòng thử lại', 'error');
                 }
             });
         }
     </script>
-</body>
-</html>
+</body> @* <-- ĐẢM BẢO CÓ DÒNG NÀY *@
+</html> @* <-- ĐẢM BẢO CÓ DÒNG NÀY *@

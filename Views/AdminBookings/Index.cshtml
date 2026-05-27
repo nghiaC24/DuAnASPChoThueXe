@@ -1,55 +1,186 @@
 ﻿@model IEnumerable<DuAnASPChoThueXe.Models.Booking>
 @{
     Layout = "_AdminLayout";
-    ViewData["Title"] = "Quản Lý Đơn Thuê Xe";
+    ViewData["Title"] = "Quản lý Đơn thuê xe";
 }
 
-<div class="card shadow-sm border-0 p-4" style="border-radius: 15px;">
-    <div class="table-responsive">
-        <table class="table table-hover align-middle">
-            <thead class="table-light">
-                <tr class="text-uppercase small fw-bold">
-                    <th>Khách Hàng</th>
-                    <th>SĐT</th>
-                    <th>Xe Thuê</th>
-                    <th>Tổng Tiền</th>
-                    <th>Trạng Thái</th>
-                    <th class="text-center">Thao Tác</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td><strong>@item.CustomerName</strong></td>
-                        <td><span class="text-muted">@item.CustomerPhone</span></td>
-                        <td><span class="badge bg-light text-dark border">@item.Motorbike?.Name</span></td>
-                        <td class="text-danger fw-bold">@item.TotalPrice.ToString("N0") đ</td>
-                        <td>
-                            <span class="badge @(item.Status.Contains("xác nhận") ? "bg-success" : "bg-warning text-dark") px-3 py-2">
-                                @item.Status
-                            </span>
-                        </td>
-                        <td class="text-center">
-                            <!-- NÚT XEM CHI TIẾT VÀ IN HÓA ĐƠN -->
-                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white rounded-pill px-3 me-2 shadow-sm">
-                                <i class="bi bi-eye-fill"></i> Chi tiết
+<style>
+    /* Màu sắc trạng thái */
+    .status-pending {
+        background-color: #fef3c7;
+        color: #d97706;
+    }
+
+    .status-confirmed {
+        background-color: #def7ec;
+        color: #059669;
+    }
+
+    .status-completed {
+        background-color: #e1effe;
+        color: #0060a9;
+    }
+
+    .status-cancelled {
+        background-color: #fde2e1;
+        color: #dc2626;
+    }
+
+    .booking-card {
+        background: white;
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        margin-bottom: 20px;
+        transition: transform 0.2s;
+        border-left: 5px solid #0060a9;
+    }
+
+        .booking-card:hover {
+            transform: translateY(-3px);
+        }
+
+    .label-muted {
+        font-size: 11px;
+        text-transform: uppercase;
+        color: #94a3b8;
+        font-weight: 700;
+        margin-bottom: 2px;
+    }
+
+    /* Tối ưu nút bấm */
+    .btn-action-knp {
+        border-radius: 12px;
+        padding: 10px;
+        font-weight: 600;
+        font-size: 14px;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+    }
+
+    .form-select-knp {
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        background-color: #f8fafc;
+        font-weight: 600;
+        height: 45px;
+    }
+
+    .gps-box {
+        background: #f0fdf4;
+        border: 1px dashed #22c55e;
+        border-radius: 12px;
+        padding: 10px;
+        margin-bottom: 15px;
+    }
+</style>
+
+<div class="container-fluid pb-5">
+    <!-- Header -->
+    <div class="mb-4 d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="fw-bold text-dark mb-1">Quản lý Đơn thuê xe</h2>
+            <p class="text-muted small">Hệ thống quản lý vận hành hành KNP</p>
+        </div>
+        <button class="btn btn-light rounded-circle shadow-sm"><i class="bi bi-funnel"></i></button>
+    </div>
+
+    <!-- Thanh tìm kiếm -->
+    <div class="bg-white p-3 rounded-4 shadow-sm mb-4">
+        <div class="input-group">
+            <span class="input-group-text bg-transparent border-0"><i class="bi bi-search text-muted"></i></span>
+            <input type="text" class="form-control border-0" placeholder="Tìm kiếm tên khách hàng hoặc SĐT...">
+        </div>
+    </div>
+
+    <div class="row g-4">
+        @foreach (var item in Model)
+        {
+            <div class="col-12 col-md-6 col-xl-4">
+                <div class="booking-card p-4 h-100 d-flex flex-column">
+                    <!-- Header Card -->
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h5 class="fw-bold mb-0">@item.CustomerName</h5>
+                            <span class="text-muted small">ID: #ORD-@item.Id.ToString("0000")</span>
+                        </div>
+                        @{
+                            var statusClass = item.Status switch
+                            {
+                                "Hoàn thành" => "status-completed",
+                                "Đã xác nhận" or "Đã giao xe" => "status-confirmed",
+                                "Đã hủy" => "status-cancelled",
+                                _ => "status-pending"
+                            };
+                        }
+                        <span class="badge @statusClass px-3 py-2 rounded-pill small">@item.Status</span>
+                    </div>
+
+                    <!-- Nội dung -->
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <div class="label-muted">Số điện thoại</div>
+                            <div class="fw-bold text-dark">@item.CustomerPhone</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="label-muted">Xe thuê</div>
+                            <div class="badge bg-light text-primary border-0 px-2 py-1 text-truncate w-100 text-start">
+                                <i class="bi bi-bicycle me-1"></i> @(item.Motorbike?.Name ?? item.Car?.Name ?? "Chưa rõ xe")
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="label-muted">Tổng tiền thanh toán</div>
+                            <div class="text-danger fw-bold fs-5">@item.TotalPrice.ToString("N0") đ</div>
+                        </div>
+                    </div>
+
+                    <!-- Khu vực GPS (Nếu đang thuê và có tọa độ) -->
+                    @{
+                        var vehicleLat = item.Motorbike?.CurrentLat ?? item.Car?.CurrentLat;
+                        var vehicleLng = item.Motorbike?.CurrentLng ?? item.Car?.CurrentLng;
+                    }
+                    @if ((item.Status == "Đang thuê" || item.Status == "Đã giao xe") && vehicleLat != null)
+                    {
+                        <div class="gps-box d-flex justify-content-between align-items-center">
+                            <span class="small text-success fw-bold"><i class="bi bi-geo-alt-fill"></i> Đang di chuyển...</span>
+                            <a href="https://www.google.com/maps?q=@vehicleLat,@vehicleLng" target="_blank" class="btn btn-sm btn-success rounded-pill px-3">Định vị</a>
+                        </div>
+                    }
+
+                    <div class="mt-auto">
+                        <hr class="text-muted opacity-25">
+                        <!-- Nút thao tác chính -->
+                        <div class="d-flex gap-2">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary btn-action-knp shadow-sm" style="background: #0060a9; flex: 1;">
+                                <i class="bi bi-eye me-2"></i> Chi tiết
                             </a>
 
-                            <form asp-action="UpdateStatus" method="post" class="d-inline">
-                                <input type="hidden" name="id" value="@item.Id" />
-                                <select name="status" onchange="this.form.submit()" class="form-select form-select-sm d-inline w-auto rounded-pill border-secondary">
-                                    <option>Đổi trạng thái</option>
-                                    <option value="Đã xác nhận">Xác nhận đơn</option>
-                                    <option value="Đã giao xe">Đã giao xe</option>
-                                    <option value="Hoàn thành">Hoàn thành</option>
-                                    <option value="Đã hủy">Hủy đơn</option>
-                                </select>
-                            </form>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+                            <div style="flex: 1.5;">
+                                <form asp-action="UpdateStatus" method="post" id="statusForm-@item.Id">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <select name="status" onchange="this.form.submit()" class="form-select form-select-knp shadow-sm">
+                                        <option selected disabled>Đổi trạng thái</option>
+                                        <option value="Đã xác nhận">Xác nhận đơn</option>
+                                        <option value="Đã giao xe">Đã giao xe</option>
+                                        <option value="Hoàn thành">Hoàn thành</option>
+                                        <option value="Đã hủy">Hủy đơn</option>
+                                    </select>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
 </div>
+
+@if (!Model.Any())
+{
+    <div class="text-center py-5">
+        <p class="text-muted mt-3">Chưa có đơn thuê xe nào trong hệ thống.</p>
+    </div>
+}

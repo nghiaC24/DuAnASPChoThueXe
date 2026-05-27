@@ -4,75 +4,166 @@
 }
 
 <style>
+    :root {
+        --knp-pink: #ff4d6d;
+        --knp-pink-light: #fff0f3;
+    }
+
     .category-banner {
         background: linear-gradient(45deg, #ff85a2, #ff4d6d);
-        padding: 60px 0;
+        padding: 80px 0;
         text-align: center;
         color: white;
         margin-bottom: 50px;
-        border-radius: 0 0 50px 50px;
-        box-shadow: 0 10px 30px rgba(255, 77, 109, 0.2);
+        border-radius: 0 0 80px 80px;
+        box-shadow: 0 15px 40px rgba(255, 77, 109, 0.2);
     }
 
-    .bike-card-custom {
-        border: none;
-        border-radius: 20px;
-        transition: 0.4s;
+    .bike-card-luxury {
+        border: 1px solid #f0f0f0;
+        border-radius: 30px;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         background: #fff;
-        overflow: hidden;
+        padding: 20px;
+        position: relative;
+        height: 100%;
     }
 
-        .bike-card-custom:hover {
+        .bike-card-luxury:hover {
             transform: translateY(-15px);
-            box-shadow: 0 15px 35px rgba(255, 133, 162, 0.15);
+            box-shadow: 0 25px 50px rgba(255, 77, 109, 0.1);
+            border-color: var(--knp-pink);
         }
 
-    .price-tag {
-        background: #fff0f3;
-        color: #ff4d6d;
+    .img-wrapper {
+        background: #fdfdfd;
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 20px;
+        position: relative;
+    }
+
+    /* Badge Hết xe / Đang thuê */
+    .sold-out-badge {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background: #dc3545;
+        color: white;
         padding: 5px 15px;
-        border-radius: 30px;
+        border-radius: 10px;
+        font-weight: 800;
+        font-size: 10px;
+        z-index: 10;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .img-grayscale {
+        filter: grayscale(1);
+        opacity: 0.5;
+    }
+
+    .price-tag-custom {
+        background: var(--knp-pink-light);
+        color: var(--knp-pink);
+        padding: 8px 20px;
+        border-radius: 50px;
         font-weight: 800;
         display: inline-block;
+        font-size: 14px;
     }
+
+    .btn-group-custom {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .btn-details {
+        border: 2px solid var(--knp-pink);
+        color: var(--knp-pink);
+        border-radius: 50px;
+        font-weight: 700;
+        transition: 0.3s;
+        text-decoration: none;
+        flex: 1;
+        font-size: 12px;
+        padding: 10px 0;
+        text-align: center;
+    }
+
+        .btn-details:hover {
+            background: var(--knp-pink);
+            color: white;
+        }
+
+    .btn-rent {
+        background: var(--knp-pink);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        font-weight: 700;
+        flex: 1;
+        font-size: 12px;
+        padding: 10px 0;
+        transition: 0.3s;
+    }
+
+        .btn-rent:hover:not([disabled]) {
+            background: #e63958;
+            box-shadow: 0 10px 20px rgba(255, 77, 109, 0.2);
+        }
 </style>
 
-<!-- Banner Tiêu Đề Trang Riêng -->
 <section class="category-banner animate__animated animate__fadeIn">
     <div class="container">
         <h1 class="display-4 fw-bold text-uppercase">@ViewBag.CategoryName</h1>
-        <p class="lead opacity-75">Khám phá dàn xe chất lượng cao, máy êm, giá rẻ tại KNP Rental</p>
+        <p class="lead fw-medium opacity-90">Hệ thống xe đời mới - Thủ tục nhanh gọn</p>
     </div>
 </section>
 
 <div class="container py-4">
     <div class="row g-4">
-        @if (Model.Any())
+        @foreach (var item in Model)
         {
-            @foreach (var item in Model)
-            {
-                <div class="col-lg-3 col-md-6" data-aos="fade-up">
-                    <div class="card h-100 bike-card-custom shadow-sm p-3">
-                        <div class="text-center mb-3">
-                            <img src="@item.ImageUrl" class="img-fluid" style="height: 180px; object-fit: contain;" alt="@item.Name">
-                        </div>
-                        <div class="card-body text-center">
-                            <h5 class="fw-bold mb-2">@item.Name</h5>
-                            <div class="price-tag mb-3">@item.PricePerDay.ToString("N0") đ/ngày</div>
-                            <button onclick="addToCart(@item.Id)" class="btn btn-danger w-100 rounded-pill fw-bold py-2" style="background:#ff4d6d; border:none">
-                                THUÊ NGAY
-                            </button>
+            <div class="col-lg-3 col-md-6" data-aos="fade-up">
+                <div class="card bike-card-luxury shadow-sm">
+
+                    @* SỬA LOGIC HIỂN THỊ BADGE *@
+                    @if (item.Status != "Sẵn sàng")
+                    {
+                        <div class="sold-out-badge">ĐANG ĐƯỢC THUÊ</div>
+                    }
+
+                    <div class="img-wrapper text-center">
+                        <img src="@item.ImageUrl" class="img-fluid @(item.Status != "Sẵn sàng" ? "img-grayscale" : "")"
+                             style="height: 150px; object-fit: contain;" alt="@item.Name">
+                    </div>
+
+                    <div class="card-body text-center p-0">
+                        <h5 class="fw-bold mb-2 text-dark">@item.Name</h5>
+
+                        @* Hiển thị biển số nhỏ cho khách xem *@
+                        <div class="small text-muted mb-2">Biển số: <strong>@item.LicensePlate</strong></div>
+
+                        <div class="price-tag-custom">@item.PricePerDay.ToString("N0") <small>đ/ngày</small></div>
+
+                        <div class="btn-group-custom px-2">
+                            <a href="/Home/MotorbikeDetails/@item.Id" class="btn btn-details">CHI TIẾT</a>
+
+                            @* SỬA LOGIC NÚT BẤM ĐỒNG BỘ VỚI STATUS *@
+                            @if (item.Status == "Sẵn sàng")
+                            {
+                                @* Thêm tham số 'motorbike' để hàm addToCart trong Layout hiểu *@
+                                <button onclick="addToCart(@item.Id, 'motorbike')" class="btn btn-rent">THUÊ NGAY</button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-secondary rounded-pill flex-1" style="font-size:12px;" disabled>HẾT XE</button>
+                            }
                         </div>
                     </div>
                 </div>
-            }
-        }
-        else
-        {
-            <div class="col-12 text-center py-5">
-                <i class="bi bi-bicycle display-1 text-muted"></i>
-                <h3 class="mt-3 text-muted">Hiện chưa có xe trong danh mục này.</h3>
-                <a href="/" class="btn btn-outline-secondary rounded-pill mt-3">Quay lại trang chủ</a>
             </div>
         }
     </div>

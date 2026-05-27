@@ -1,49 +1,237 @@
 ﻿@model IEnumerable<DuAnASPChoThueXe.Models.Motorbike>
 
 @{
-    // Dòng này cực kỳ quan trọng để đổi từ màu hồng sang menu đen của Admin
-    Layout = "_AdminLayout";
-    ViewData["Title"] = "Quản Lý Danh Sách Xe";
+    ViewData["Title"] = "Quản lý Xe Máy";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<div class="card shadow-sm border-0 p-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="fw-bold text-dark">Danh Sách Xe Trong Hệ Thống</h3>
-        <a asp-action="Create" class="btn btn-primary rounded-pill px-4 shadow">
-            <i class="bi bi-plus-circle me-2"></i> Thêm Xe Mới
-        </a>
+<style>
+    /* Giữ nguyên CSS cũ của bạn */
+    .knp-page-header {
+        margin-bottom: 25px;
+    }
+
+    .search-filter-section {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .search-box {
+        flex: 1;
+        background: white;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        padding: 0 15px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+        .search-box input {
+            border: none;
+            padding: 12px;
+            width: 100%;
+            outline: none;
+        }
+
+    .filter-btn {
+        background: #eaedf2;
+        border: none;
+        border-radius: 12px;
+        padding: 0 20px;
+        color: #4b5563;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .motorbike-card {
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        background: white;
+        height: 100%;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+
+        .motorbike-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+    .card-img-wrapper {
+        position: relative;
+        height: 200px;
+    }
+
+    .card-img-top {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .status-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        padding: 6px 15px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 700;
+        color: white;
+        z-index: 10;
+    }
+
+    .bg-ready {
+        background: #10b981;
+    }
+
+    .bg-out {
+        background: #ef4444;
+    }
+
+    .capacity-tag {
+        background: #eef2ff;
+        color: #4f46e5;
+        padding: 4px 12px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .price-text {
+        color: #dc2626;
+        font-size: 1.25rem;
+        font-weight: 800;
+    }
+
+    .action-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+        border: none;
+        text-decoration: none;
+    }
+
+    .btn-edit-light {
+        background: #e0f2fe;
+        color: #0369a1;
+    }
+
+    .btn-delete-light {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    .btn-gps-light {
+        background: #f0fdf4;
+        color: #15803d;
+        border: 1px solid #dcfce7;
+    }
+
+    .btn-add-primary {
+        background: #0060a9;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 12px 24px;
+        font-weight: 600;
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .qty-text {
+        font-size: 12px;
+        font-weight: 600;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="knp-page-header">
+        <h2 class="fw-bold mb-1">Quản lý Xe Máy</h2>
+        <p class="text-muted">Danh sách phương tiện và định vị GPS theo thời gian thực</p>
     </div>
 
-    <table class="table table-hover align-middle">
-        <thead class="table-dark">
-            <tr>
-                <th>Ảnh</th>
-                <th>Tên Xe</th>
-                <th>Phân Khối</th>
-                <th>Giá Thuê</th>
-                <th class="text-center">Thao Tác</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        <img src="@item.ImageUrl" width="70" class="rounded border shadow-sm"
-                             onerror="this.src='https://placehold.co/100x100?text=No+Image'">
-                    </td>
-                    <td class="fw-bold">@item.Name</td>
-                    <td><span class="badge bg-light text-dark border">@item.Capacity</span></td>
-                    <td class="text-danger fw-bold">@item.PricePerDay.ToString("N0") đ</td>
-                    <td class="text-center">
-                        <a href="#" class="btn btn-sm btn-outline-warning me-2"><i class="bi bi-pencil"></i></a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger"
-                           onclick="return confirm('Bạn có chắc chắn muốn xóa xe này?')">
-                            <i class="bi bi-trash"></i>
-                        </a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <a asp-controller="AdminMotorbikes" asp-action="Create" class="btn btn-add-primary shadow-sm mb-4">
+        <i class="bi bi-plus-lg me-2"></i> Thêm xe máy mới
+    </a>
+
+    <div class="row g-4">
+        @foreach (var item in Model)
+        {
+            <div class="col-12 col-md-6 col-xl-4">
+                <div class="card motorbike-card">
+                    <div class="card-img-wrapper">
+                        <img src="@item.ImageUrl" class="card-img-top" onerror="this.src='/images/no-image.png'">
+
+                        <!-- SỬA TẠI ĐÂY: Kiểm tra Status thay vì số lượng -->
+                        @if (item.Status == "Sẵn sàng")
+                        {
+                            <span class="status-badge bg-ready shadow-sm text-uppercase">CÒN XE</span>
+                        }
+                        else
+                        {
+                            <span class="status-badge bg-out shadow-sm text-uppercase">HẾT XE / KHÓA</span>
+                        }
+                    </div>
+
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h5 class="fw-bold mb-1">@item.Name</h5>
+                                <div class="d-flex gap-2 align-items-center">
+                                    <span class="badge bg-light text-dark border small">@item.LicensePlate</span> <!-- Hiện biển số xe -->
+                                    <span class="text-muted small">@item.Category?.Name</span>
+                                </div>
+
+                                <!-- SỬA TẠI ĐÂY: Cập nhật màu sắc chữ dựa trên Status -->
+                                <div class="qty-text mt-3">
+                                    <span class="text-muted">Trình trạng kho: </span>
+                                    <span class="@(item.Status == "Sẵn sàng" ? "text-success" : "text-danger")">
+                                        @(item.Status == "Sẵn sàng" ? "1 / 1 chiếc sẵn dụng" : "0 / 1 chiếc (Đã khóa)")
+                                    </span>
+                                </div>
+                            </div>
+                            <span class="capacity-tag">@item.Capacity</span>
+                        </div>
+
+                        <hr class="my-3 opacity-25">
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <small class="text-muted d-block text-uppercase fw-bold" style="font-size: 10px;">Giá thuê</small>
+                                <span class="price-text">@item.PricePerDay.ToString("N0") đ</span>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                @if (item.CurrentLat != null && item.CurrentLng != null)
+                                {
+                                    <a href="https://www.google.com/maps?q=@item.CurrentLat,@item.CurrentLng" target="_blank"
+                                       class="action-btn btn-gps-light" title="Xem GPS">
+                                        <i class="bi bi-geo-alt-fill fs-5"></i>
+                                    </a>
+                                }
+
+                                <!-- Nút sửa trạng thái -->
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="action-btn btn-edit-light" title="Bật/Tắt xe">
+                                    <i class="bi bi-toggle-on fs-5"></i>
+                                </a>
+
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="action-btn btn-delete-light"
+                                   onclick="return confirm('Xác nhận xóa?')">
+                                    <i class="bi bi-trash3 fs-5"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 </div>

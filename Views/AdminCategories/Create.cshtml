@@ -1,0 +1,32 @@
+﻿@model DuAnASPChoThueXe.Models.Category
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Thêm Loại Xe";
+}
+
+<div class="container py-4" style="max-width: 800px;">
+    <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="card-header bg-white py-4 border-0">
+            <h4 class="fw-bold m-0 text-center" style="color: #0060a9;">TẠO DANH MỤC LOẠI XE MỚI</h4>
+        </div>
+        <div class="card-body p-5">
+            <form asp-action="Create">
+                <div class="mb-4">
+                    <label class="form-label fw-bold small text-uppercase">Tên loại xe (Vd: Xe số, Xe côn tay...)</label>
+                    <input asp-for="Name" class="form-control form-control-lg border-0 bg-light shadow-sm" style="border-radius: 12px;" placeholder="Nhập tên loại xe..." />
+                    <span asp-validation-for="Name" class="text-danger small mt-1"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold small text-uppercase">Mô tả ngắn</label>
+                    <textarea asp-for="Description" class="form-control border-0 bg-light shadow-sm" style="border-radius: 12px;" rows="3" placeholder="Mô tả về loại xe này..."></textarea>
+                </div>
+
+                <div class="d-flex gap-3 mt-5">
+                    <a asp-action="Index" class="btn btn-light flex-grow-1 py-3 rounded-pill fw-bold">HỦY BỎ</a>
+                    <button type="submit" class="btn btn-primary flex-grow-1 py-3 rounded-pill fw-bold shadow" style="background: #0060a9; border: none;">LƯU LOẠI XE</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

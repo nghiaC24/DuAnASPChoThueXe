@@ -23,11 +23,19 @@
         </div>
 
         <div class="row">
-            <div class="col-md-4 mb-3">
+            <div class="col-md-3 mb-3">
                 <label class="form-label fw-bold">Phân khối (cc)</label>
                 <input asp-for="Capacity" class="form-control rounded-3" placeholder="110cc">
             </div>
-            <div class="col-md-8 mb-3">
+
+            <!-- THÊM Ô BIỂN SỐ XE VÀO ĐÂY -->
+            <div class="col-md-3 mb-3">
+                <label class="form-label fw-bold text-primary">Biển số xe</label>
+                <input asp-for="LicensePlate" class="form-control rounded-3 border-primary shadow-sm fw-bold text-uppercase" required placeholder="Vd: 59-P1 123.45">
+                <span asp-validation-for="LicensePlate" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6 mb-3">
                 <label class="form-label fw-bold">Gợi ý khách hàng</label>
                 <input asp-for="Suggestion" class="form-control rounded-3" placeholder="Phù hợp đi lại trong nội thành">
             </div>
